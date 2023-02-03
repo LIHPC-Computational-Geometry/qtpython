@@ -1,0 +1,24 @@
+#!/bin/sh
+#
+# Procedure d'execution standard de PyConsole
+#
+
+# =========================================================================================
+# Exemple d'utilisation : /opt/bin/PyConsole -script test.py
+# =========================================================================================
+
+# Protection contre l'attente de , comme séparateur décimal lors des lectures
+# de fichiers CAO/Maillage :
+export -n LC_ALL
+export LC_NUMERIC=C
+
+QTPYTHON_ETC_PATH=`/opt/etc`
+export QT_PYTHON_SCRIPTS_DIR=$QTPYTHON_ETC_PATH
+export PYTHONPATH=$QTPYTHON_ETC_PATH":"$PYTHONPATH
+
+echo "QTPYTHON_ETC_PATH = "QTPYTHON_ETC_PATHPYTHONPATH
+echo "PYTHONPATH = "$PYTHONPATH
+
+#echo "args = "$args
+/opt/bin/PyConsole $*
+
