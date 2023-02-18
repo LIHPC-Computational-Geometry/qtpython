@@ -1,0 +1,13 @@
+{
+    "version": 3,
+    "configurePresets": [
+      {
+        "name": "ci",
+        "cacheVariables": {
+          "USE_PYTHON_3": "ON",
+          "CMAKE_INSTALL_PREFIX": "$env{INSTALL_DIR}/tkutil;$env{INSTALL_DIR}/qtutil;$env{INSTALL_DIR}/pythonutil"
+        }
+      }
+    ]
+}
+  
