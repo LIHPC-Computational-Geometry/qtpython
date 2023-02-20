@@ -5,7 +5,9 @@
         "name": "ci",
         "cacheVariables": {
           "USE_PYTHON_3": "ON",
-          "CMAKE_PREFIX_PATH": "$env{INSTALL_DIR}/tkutil;$env{INSTALL_DIR}/qtutil;$env{INSTALL_DIR}/pythonutil"
+          "TkUtil_ROOT": "$env{INSTALL_DIR}/tkutil",
+          "QtUtil_ROOT": "$env{INSTALL_DIR}/qtutil",
+          "PythonUtil_ROOT": "$env{INSTALL_DIR}/pythonutil"
         }
       }
     ]
