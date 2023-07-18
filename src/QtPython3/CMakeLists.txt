@@ -9,8 +9,8 @@ include (${CMAKE_SOURCE_DIR}/cmake/workarounds.cmake)
 # Le répertoire des scripts python :
 set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
 
-find_package (QtUtil 5 REQUIRED)
-find_package (PythonUtil 5 REQUIRED)
+find_package (QtUtil REQUIRED)
+find_package (PythonUtil REQUIRED)
 find_package(Qt5Core NO_CMAKE_SYSTEM_PATH)	# In order to enable moc ...
 
 file (GLOB HEADERS public/${CURRENT_PACKAGE_NAME}/*.h)
