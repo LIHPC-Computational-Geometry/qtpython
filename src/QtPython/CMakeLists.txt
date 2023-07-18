@@ -1,18 +1,18 @@
 set (CURRENT_PACKAGE_NAME "QtPython")
 set (CURRENT_PACKAGE_MACRO_NAME "QT_PYTHON")
 
+find_package (GUIToolkitsVariables)
+
 include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
-include (${CMAKE_SOURCE_DIR}/cmake/common.cmake)
-include (${CMAKE_SOURCE_DIR}/cmake/python_binding.cmake)
-include (${CMAKE_SOURCE_DIR}/cmake/workarounds.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/python_binding.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
 
 # Le répertoire des scripts python :
 set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
-message (STATUS "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-message (STATUS "QT_PYTHON_SCRIPTS_DIR=${QT_PYTHON_SCRIPTS_DIR} PYTHON_BINDING_DIR=${PYTHON_BINDING_DIR}")
 
-find_package (QtUtil 5 REQUIRED)
-find_package (PythonUtil 5 REQUIRED)
+find_package (QtUtil 6 REQUIRED)
+find_package (PythonUtil 6 REQUIRED)
 find_package(Qt5Core NO_CMAKE_SYSTEM_PATH)	# In order to enable moc ...
 
 file (GLOB HEADERS public/${CURRENT_PACKAGE_NAME}/*.h)
@@ -42,7 +42,6 @@ target_compile_options (QtPython PRIVATE ${SHARED_CFLAGS})	# Requested by Qt ...
 target_include_directories (QtPython PUBLIC ${QT_INC_DEPENDENCIES})
 target_link_libraries (QtPython PUBLIC QtUtil::QtUtil PythonUtil::PythonUtil)
 target_include_directories (QtPython PUBLIC ${QT_INC_DEPENDENCIES} ${Python2_INCLUDE_DIRS})
-
 # Etre capable une fois installée de retrouver QtUtil, TkUtil, Qt5*, ... :
 # (Rem : en son absence on a Set runtime path of "/tmp/pignerol/install/lib/libQtPython.so.5.0.0" to "") ...
 set_target_properties (QtPython PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
@@ -77,10 +76,8 @@ foreach (qt_python_script ${QT_PYTHON_SCRIPTS})
 	get_filename_component (SCRIPT_NAME ${qt_python_script} NAME)
 	configure_file (${qt_python_script} "${CMAKE_BINARY_DIR}/src/${CMAKE_ETC_DIR_NAME}/python2/${SCRIPT_NAME}" COPYONLY)
 endforeach (qt_python_script)
-# A l'installation recopie dans le répertoire d'installation :
-message (STATUS "+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++")
-message (STATUS "INSTALLING FILES QT_PYTHON_SCRIPTS=${QT_PYTHON_SCRIPTS} TO QT_PYTHON_SCRIPTS_DIR=${QT_PYTHON_SCRIPTS_DIR}")
 
+# A l'installation recopie dans le répertoire d'installation :
 install (FILES ${QT_PYTHON_SCRIPTS} DESTINATION "${QT_PYTHON_SCRIPTS_DIR}")
 
 # Le fichier contenant les informations de version de ce module :

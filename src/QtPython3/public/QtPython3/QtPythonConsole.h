@@ -712,7 +712,9 @@ class QtPythonConsole : public QtTextEditor
 
 		EndOfDocCursor (QtPythonConsole& pc);
 		virtual ~EndOfDocCursor ( );
-
+		virtual void setEnabled (bool enabled);			// v 6.2.0
+		virtual bool isEnabled ( ) const;				// v 6.2.0
+		
 
 		private :
 
@@ -721,6 +723,8 @@ class QtPythonConsole : public QtTextEditor
 
 		QtPythonConsole&	_console;
 		QTextCursor			_cursor;
+		bool				_enabled;					// v 6.2.0
+		QTextCursor			_initialCursorPosition;		// v 6.2.0
 	};	// class EndOfDocCursor
 
 	/**
@@ -1049,6 +1053,9 @@ class QtPythonConsole : public QtTextEditor
 
 	/** Combo-box pour la complétion. */
 	QComboBox*								_completionComboBox;
+	
+	/** La console est elle en cours d'évaluation de la complétion ? */
+	bool									_checkingCompletion;	// v5.3.0
 
 	/**
 	 * Quelques icônes (non static car QApplication doit être instanciée avant).

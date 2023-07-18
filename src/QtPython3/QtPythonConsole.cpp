@@ -42,6 +42,7 @@ static const TkUtil::Charset	charset ("àéèùô");
 USE_ENCODING_AUTODETECTION
 
 
+
 /* On utilise la fonction python builtin execfile pour exécuter sous Pdb
  * des fichiers. Fonctionne bien avec Python 2.6 et 2.7, Pdb s'arrête bien aux
  * points d'arrêt demandés.
@@ -270,18 +271,12 @@ bool QtPythonConsole::Instruction::isRunnable (const string& instruction)
 // ============================================================================
 
 
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::failedInstructionFormat (QtPythonConsole::QtScriptTextFormat::FAILED_INSTRUCTION);
-const QtPythonConsole::QtScriptTextFormat
-		QtPythonConsole::QtScriptTextFormat::tryFormat (QtPythonConsole::QtScriptTextFormat::TRY);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::failedInstructionFormat (QtPythonConsole::QtScriptTextFormat::FAILED_INSTRUCTION);
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::tryFormat (QtPythonConsole::QtScriptTextFormat::TRY);
 
 QtPythonConsole::QtScriptTextFormat::QtScriptTextFormat (QtPythonConsole::QtScriptTextFormat::LINE_TYPE type)
 	: QTextCharFormat ( ), _type (type)
@@ -314,11 +309,9 @@ QtPythonConsole::QtScriptTextFormat::QtScriptTextFormat (QtPythonConsole::QtScri
 }	// QtScriptTextFormat::QtScriptTextFormat
 
 
-const QtPythonConsole::QtScriptTextFormat&
-					QtPythonConsole::QtScriptTextFormat::textFormat (const QtPythonConsole::Instruction& instruction)
+const QtPythonConsole::QtScriptTextFormat& QtPythonConsole::QtScriptTextFormat::textFormat (const QtPythonConsole::Instruction& instruction)
 {
-	const string	trimed (
-			UTF8String (instruction.command ( )).trim ( ).utf8 ( ));
+	const string	trimed (UTF8String (instruction.command ( )).trim ( ).utf8 ( ));
 	if (true == trimed.empty ( ))
 		return QtPythonConsole::QtScriptTextFormat::emptyLineFormat;
 	if ('#' == trimed [0])
@@ -350,8 +343,7 @@ QtPythonConsole::InstructionsFile::InstructionsFile (bool debug, const string& f
 
 
 QtPythonConsole::InstructionsFile::InstructionsFile (const QtPythonConsole::InstructionsFile&)
-	: _debug (false), _tmpFile ( ), _tmpStream ( ), _lines ( ),  _lineCount (0), _firstLineNum (0), _iso8859 (false),
-	  _maxProcessedLine (0)
+	: _debug (false), _tmpFile ( ), _tmpStream ( ), _lines ( ),  _lineCount (0), _firstLineNum (0), _iso8859 (false), _maxProcessedLine (0)
 {
 	assert (0 && "InstructionsFile copy constructor is not allowed.");
 }	// InstructionsFile::InstructionsFile
@@ -455,8 +447,7 @@ string QtPythonConsole::InstructionsFile::getConsoleLine (size_t num) const
 	if (num < _firstLineNum)
 	{
 		UTF8String	message (charset);
-		message << "Ligne " << num << " demandée alors que le fichier "
-		        << getFileName ( ) << " ne contient que " << _lineCount<< " lignes.";
+		message << "Ligne " << num << " demandée alors que le fichier " << getFileName ( ) << " ne contient que " << _lineCount<< " lignes.";
 		throw Exception (message);
 	}	// if (num < _firstLineNum)
 
@@ -497,8 +488,7 @@ size_t QtPythonConsole::InstructionsFile::nextRunnableLine (size_t after, bool w
 		if (getLineOffset ( ) > after)
 		{
 			UTF8String	message (charset);
-			message << "Instruction demandée après la ligne " << after
-			        << ", offset : " << getLineOffset ( ) << ".";
+			message << "Instruction demandée après la ligne " << after << ", offset : " << getLineOffset ( ) << ".";
 			INTERNAL_ERROR (exc, message, "InstructionsFile::nextRunnableLine")
 			throw exc;
 		}	// if (getLineOffset ( ) > after)
@@ -521,7 +511,7 @@ size_t QtPythonConsole::InstructionsFile::nextRunnableLine (size_t after, bool w
 // ============================================================================
 
 QtPythonConsole::EndOfDocCursor::EndOfDocCursor (QtPythonConsole& console)
-	: _console (console), _cursor (console.textCursor ( ))
+	: _console (console), _cursor (console.textCursor ( )), _enabled (true), _initialCursorPosition (console.textCursor ( ))
 {
 	// L'objectif est ici de positionner, en fin d'exécution, le curseur en fin de script à une position où l'on puisse
 	// insérer un fichier (icône "insérer" active).
@@ -569,8 +559,21 @@ QtPythonConsole::EndOfDocCursor& QtPythonConsole::EndOfDocCursor::operator = (co
 
 QtPythonConsole::EndOfDocCursor::~EndOfDocCursor ( )
 {
-	_console.setTextCursor (_cursor);
+	if (true == isEnabled ( ))	// v 6.2.0
+		_console.setTextCursor (_cursor);
 }	// EndOfDocCursor::~EndOfDocCursor
+
+
+void QtPythonConsole::EndOfDocCursor::setEnabled (bool enabled)	// v 6.2.0
+{
+	_enabled	= enabled;
+}	// EndOfDocCursor::setEnabled
+
+
+bool QtPythonConsole::EndOfDocCursor::isEnabled ( ) const	// v 6.2.0
+{
+	return _enabled;
+}	// EndOfDocCursor::isEnabled
 
 
 // ============================================================================
@@ -693,6 +696,7 @@ static int tracePythonExecution (PyObject*, PyFrameObject* frame, int what, PyOb
 	return 0;
 }	// tracePythonExecution
 
+
 Charset::CHARSET QtPythonConsole::getFileCharset (const string& path)
 {	// Normalement on a le jeu de caractères en 2ème ligne :
 	// #!/usr/bin/python
@@ -714,11 +718,9 @@ Charset::CHARSET QtPythonConsole::getFileCharset (const string& path)
 			const char*	source	= coding + 7;
 			if (0 != strcasestr (source, "ascii"))
 				return Charset::ASCII;
-			else if ((0 != strcasestr (source, "iso8859")) ||
-				     (0 != strcasestr (source, "iso-8859")))
+			else if ((0 != strcasestr (source, "iso8859")) || (0 != strcasestr (source, "iso-8859")))
 				return Charset::ISO_8859;
-			else if ((0 != strcasestr (source, "utf8")) ||
-				     (0 != strcasestr (source, "utf-8")))
+			else if ((0 != strcasestr (source, "utf8")) || (0 != strcasestr (source, "utf-8")))
 				return Charset::UTF_8;
 		}	// if (NULL != coding)
 	}	// while ((true == stream.good ( )) && ...
@@ -741,7 +743,7 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 	  _runningModeAction (0), _runAction (0), _stopAction (0),
 	  _nextAction (0), _addBreakPointAction (0), _removeBreakPointAction (0),
 	  _clearBreakPointsAction (0), _insertScriptAction (0),
-	  _completionComboBox (0),
+	  _completionComboBox (0), _checkingCompletion (false),
 	  _breakPointIcon (":/images/breakpoint.png"),
 	  _currentLineIcon (":/images/current_line.png"),
 	  _globalDict (0), _localDict (0),
@@ -765,12 +767,10 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 
 	// Les actions associées à la console :
 	// Le mode d'exécution :
-	_runningModeAction	=
-		new QAction (QIcon (":/images/dbg_mode.png"), "Mode debug/normal",this);
+	_runningModeAction	= new QAction (QIcon (":/images/dbg_mode.png"), "Mode debug/normal",this);
 	_runningModeAction->setCheckable (true);
 	_runningModeAction->setChecked (false);
-	connect (_runningModeAction, SIGNAL (toggled (bool)), this,
-	         SLOT (runningModeCallback (bool)));
+	connect (_runningModeAction, SIGNAL (toggled (bool)), this, SLOT (runningModeCallback (bool)));
 	// L'exécution à partir du point courant :
 	_runAction	= new QAction (QIcon (":/images/run.png"), QSTR ("Exécuter"), this);
 	connect (_runAction, SIGNAL (triggered ( )), this, SLOT (runCallback ( )));
@@ -781,27 +781,18 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 	_nextAction	= new QAction (QIcon (":/images/next.png"), QSTR ("Suivant"), this);
 	connect (_nextAction, SIGNAL (triggered ( )), this, SLOT (nextCallback( )));
 	// Ajoute un point d'arrêt à la ligne du curseur.
-	_addBreakPointAction	= new QAction (QIcon (
-			":/images/add_breakpoint.png"), QSTR ("Ajouter un point d'arrêt"), this);
-	connect (_addBreakPointAction, SIGNAL (triggered ( )), this,
-	         SLOT (addBreakPointCallback( )));
+	_addBreakPointAction	= new QAction (QIcon (":/images/add_breakpoint.png"), QSTR ("Ajouter un point d'arrêt"), this);
+	connect (_addBreakPointAction, SIGNAL (triggered ( )), this, SLOT (addBreakPointCallback( )));
 	// Enlève le point d'arrêt de la ligne du curseur.
-	_removeBreakPointAction	= new QAction (QIcon (
-			":/images/remove_breakpoint.png"), QSTR ("Enlever le point d'arrêt"),this);
-	connect (_removeBreakPointAction, SIGNAL (triggered ( )), this,
-	         SLOT (removeBreakPointCallback( )));
+	_removeBreakPointAction	= new QAction (QIcon (":/images/remove_breakpoint.png"), QSTR ("Enlever le point d'arrêt"),this);
+	connect (_removeBreakPointAction, SIGNAL (triggered ( )), this, SLOT (removeBreakPointCallback( )));
 	// Enlève tous les points d'arrêt.
-	_clearBreakPointsAction	= new QAction (QIcon (
-			":/images/clear_breakpoints.png"),
-			QSTR ("Enlever tous les points d'arrêt"),this);
-	connect (_clearBreakPointsAction, SIGNAL (triggered ( )), this,
-	         SLOT (clearBreakPointsCallback( )));
+	_clearBreakPointsAction	= new QAction (QIcon (":/images/clear_breakpoints.png"), QSTR ("Enlever tous les points d'arrêt"),this);
+	connect (_clearBreakPointsAction, SIGNAL (triggered ( )), this, SLOT (clearBreakPointsCallback( )));
 	// Affiche un sélecteur de fichier de chargement de script au point
 	// d'édition courant :
-	_insertScriptAction	= new QAction (QIcon (
-			":/images/load_script.png"), QSTR ("Insérer un script ..."), this);
-	connect (_insertScriptAction, SIGNAL (triggered ( )), this,
-	         SLOT (insertScriptCallback( )));
+	_insertScriptAction	= new QAction (QIcon (":/images/load_script.png"), QSTR ("Insérer un script ..."), this);
+	connect (_insertScriptAction, SIGNAL (triggered ( )), this, SLOT (insertScriptCallback( )));
 
 	// L'exécution à partir du point courant :
 	if (false == Py_IsInitialized ( ))
@@ -843,13 +834,12 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 
 	setRunningMode (QtPythonConsole::RM_CONTINUOUS);
 	updateActions ( );
-	// On a augmenté la marge gauche pour y mettre des icônes => redimensionner
-	// le viewport de la zone texte de la console :
+	// On a augmenté la marge gauche pour y mettre des icônes => redimensionner le viewport de la zone texte de la console :
 	updateLineNumberAreaWidthCallback (0);
-
+	PyRun_SimpleString ("import sys");
 	PyImport_ImportModule ("redirector");
 	PyRun_SimpleString ("import redirector\n"
-						"import sys\n"
+	                    "import sys\n"
 						"redir=redirector.Redirector()\n"
 						"sys.stdout = redir\n"
 						"sys.stderr = redir\n"
@@ -1056,8 +1046,7 @@ void QtPythonConsole::insert (const string& fileName, string& warnings)
 	if (0 != _pendingString.size ( ))
 	{
 		UTF8String	error (charset);
-		error << "Le texte suivant ne compile pas :\n"
-		      << _pendingString;
+		error << "Le texte suivant ne compile pas :\n" << _pendingString;
 		if (0 != warnings.size ( ))
 			warnings	+= '\n';
 		warnings	+= error.utf8 ( );
@@ -1111,8 +1100,7 @@ void QtPythonConsole::run ( )
 {
 	if (true == isRunning ( ))
 	{
-		if ((QtPythonConsole::RM_DEBUG == getRunningMode ( )) &&
-		    (true == isHalted ( )))
+		if ((QtPythonConsole::RM_DEBUG == getRunningMode ( )) && (true == isHalted ( )))
 			cont ( );
 
 		return;
@@ -1235,7 +1223,7 @@ bool QtPythonConsole::allowEditionAtLine (size_t line) const
 {
 	switch (getRunningMode ( ))
 	{
-		case QtPythonConsole::RM_DEBUG			:
+		case QtPythonConsole::RM_DEBUG		:
 			return false;
 		case QtPythonConsole::RM_CONTINUOUS	:
 		default								: ;
@@ -1306,8 +1294,7 @@ void QtPythonConsole::addSwigCompletions (vector<string>& completions, const str
 	const int	parenthesis	= QString (instruction.c_str ( )).indexOf ('(');
 	string		expression	= instruction;
 	if (-1 != parenthesis)
-		expression	= QString (expression.c_str ( )).left (
-									parenthesis).trimmed ( ).toStdString ( );
+		expression	= QString (expression.c_str ( )).left (parenthesis).trimmed ( ).toStdString ( );
 	// On va faire un appel Swig avec une signature hautement improbable.
 	// 2 cas de figure attendus :
 	// - 1 seule signature est acceptée par swig, et on va la reconstituer argument par argument ...
@@ -1346,9 +1333,7 @@ void QtPythonConsole::addSwigCompletions (vector<string>& completions, const str
 				const int end	= lines [i].indexOf (')');
 				if ((-1 != start) && (-1 != end) && (start < end))
 				{
-					UTF8String	prop	=
-							UTF8String (lines [i].toStdString ( )
-													).substring (start, end);
+					UTF8String	prop	= UTF8String (lines [i].toStdString ( )).substring (start, end);
 					const size_t	s	= prop.find ('(');
 					const size_t	e	= prop.find (')');
 					UTF8String	finalized (charset);
@@ -1580,9 +1565,11 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 	{
 		// Gérer les sorties du script python :
 		processPythonOutputs ( );
-
+		if (true == _checkingCompletion)
+			return;		// v 5.3.0
+	
 		// Cette ligne a été jouée (rem : les numéros Qt commencent à 0 ...) :
-		QTextBlock			block	= document ( )->findBlockByNumber (line-1);
+		QTextBlock			block		= document ( )->findBlockByNumber (line-1);
 		const string		instruction	= block.text ( ).toStdString ( );
 		const bool			isComment	= '#' == instruction [0] ? true : false;
 
@@ -1590,8 +1577,7 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 		{
 			if (false == isComment)
 			{
-				// Tant que les lignes précédentes sont des commentaires on les
-				// récupère pour les ajouter au fichier script.
+				// Tant que les lignes précédentes sont des commentaires on les récupère pour les ajouter au fichier script.
 				UTF8String	comments (Charset::UTF_8);
 				size_t			bl	= true == isComment ? line - 1 : line - 2;
 				bool			stopped	= 2 > bl ? true : false;
@@ -1626,14 +1612,8 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 		QTextBlockFormat	bformat	= block.blockFormat ( );
 		cformat.setProperty (QTextFormat::FullWidthSelection, true);
 		bformat.setProperty (QTextFormat::FullWidthSelection, true);
-		cformat.setBackground (
-					true == ok ?
-					QtScriptTextFormat::ranInstructionFormat.background ( ) :
-					QtScriptTextFormat::failedInstructionFormat.background ( ));
-		bformat.setBackground (
-					true == ok ?
-					QtScriptTextFormat::ranInstructionFormat.background ( ) :
-					QtScriptTextFormat::failedInstructionFormat.background ( ));
+		cformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
+		bformat.setBackground ( true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
 		QTextCursor			cursor	= textCursor ( );
 		const int			position= cursor.position ( );
 		cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
@@ -1672,8 +1652,7 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 	catch (const Exception& exc)
 	{
 		UTF8String	mess (charset);
-		cerr << "Erreur dans QtPythonConsole::lineProcessedCallback : "
-		     << exc.getFullMessage ( );
+		cerr << "Erreur dans QtPythonConsole::lineProcessedCallback : " << exc.getFullMessage ( );
 		ConsoleOutput::cout ( ) << mess << co_endl;
 	}
 	catch (...)
@@ -1806,6 +1785,7 @@ void QtPythonConsole::addToHistoric (
 		line	+= lineNumber (scriptingLog.getText ( ).utf8 ( )) - 1;
 		cursor.insertText (UTF8TOQSTRING (scriptingLog.getText ( )));
 		cursor.insertText ("\n");
+		line++;	// v 6.1.1
 		setTextCursor (cursor);
 		lineProcessedCallback (line, true, string ( ));
 	}	// if (false == isRunning ( ))
@@ -2107,36 +2087,60 @@ static bool has (const vector<string>completions, const string& comp)
 
 
 bool QtPythonConsole::handleComplete (QKeyEvent& event)
-{
+{	// v 5.2.1 : on essaye de compléter également les instructions type A	= objet.méthodeXXX.
+	// Version antérieures : ne supportait que objet.méthodeXXX ...
 	CHECK_NULL_PTR_ERROR (_completionComboBox)
 	_completionComboBox->clear ( );
 
-	vector<string>	completions;
+	// La chaîne à compléter :
+	UTF8String	instruction (editedInstruction ( ), charset), left (charset), right (editedInstruction ( ), charset);	// v 5.2.1
+	size_t		equalPos	= instruction.rfind ('=');
 
+	if ((size_t)-1 != equalPos)	// => A = ...
+	{
+		left	= instruction.substring (0, equalPos);
+		right	= instruction.substring (equalPos + 1);
+	}	// if ((size_t)-1 != equalPos)
+	// On enlève les espaces/tabs de début et fin de chaîne car ils perturbent python dans la recherche de complétion. On les mémorise
+	// pour les réinjecter une fois la complétion faite.
+	UTF8String	trimedInstruction (right.trim ( )), head (charset), tail (charset);
+	if (trimedInstruction.length ( ) != right.length ( ))
+	{
+		const size_t	first	= right.find (trimedInstruction);
+		if (0 != first)
+			head	= right.substring (0, first - 1);
+		const size_t	last	= first + trimedInstruction.length ( );
+		if (right.length ( ) - 1 != last)
+			tail	= right.substring (last);
+	}	// if (trimedInstruction.length ( ) != right.length ( ))
+
+	// Recherche des complétions possibles :
+	_checkingCompletion	= true;	
+	vector<string>	completions;
+	// L'exécution d'instructions python pour évaluer les complétions possibles provoquera le décalage des compteurs de lignes. Or ces
+	// appels python ne sont pas ici considérés comme des instructions (utilisateur), donc on restaurera les compteurs de ligne en fin
+	// d'évaluation :
+	const size_t	currentLine	= _currentExecLine, previousLine	= _previousExecLine;
 	for (size_t i = 0; i < 20; i++)
 	{	
 		try
 		{
 			UTF8String	request (charset);
-			request << "NECCompletionSession.instance ( ).complete ('"
-			        << editedInstruction ( ) << "'," << i << ")";
+//			request << "NECCompletionSession.instance ( ).complete ('" << editedInstruction ( ) << "'," << i << ")";
+			request << "NECCompletionSession.instance ( ).complete ('" << trimedInstruction << "'," << i << ")";	// v 5.3.0
 
 			PyCompilerFlags	flags;
 //			flags.cf_flags	= CO_FUTURE_DIVISION;
 			flags.cf_flags	= 0;
-			PyObject*	result	= PyRun_StringFlags (
-									request.utf8( ).c_str ( ), Py_file_input,
-									_globalDict, _localDict, &flags);
+			PyObject*	result	= PyRun_StringFlags (request.utf8( ).c_str ( ), Py_file_input, _globalDict, _localDict, &flags);
 			if (NULL == result)
 			{
 				PyErr_Clear ( );
 				break;
 			}	// if (NULL == result)
 
-			// Est-ce un proxy Swig ? Auquel cas la signature de la fonction,
-			// de type varargs, ne sera pas renseignée par la filière classique
-			// (inspect). On provoquera une levée d'exception au niveau du
-			// wrapper Swig. Le message d'erreur swig contiendra les signatures
+			// Est-ce un proxy Swig ? Auquel cas la signature de la fonction, de type varargs, ne sera pas renseignée par la filière classique
+			// (inspect). On provoquera une levée d'exception au niveau du wrapper Swig. Le message d'erreur swig contiendra les signatures
 			// possibles ...
 			PyObject*	strResult	= 0;
 			bool	isSwigProxy		= false;
@@ -2158,8 +2162,7 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 				swigProxy	= 0;
 			}	// if (true == enableSwigCompletion)
 
-			PyObject*	completionFunct	=
-				PyObject_GetAttrString (_dbgCompletionModule, "completion");
+			PyObject*	completionFunct	= PyObject_GetAttrString (_dbgCompletionModule, "completion");
 			CHECK_NULL_PTR_ERROR (completionFunct)
 			strResult		= PyObject_CallObject (completionFunct, NULL);
 			if (0 != strResult)
@@ -2195,14 +2198,22 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 		_completionComboBox->addItem ("");
 		set<string>	cmps;
 		cmps.insert (completions.begin ( ), completions.end ( ));
-		for (set<string>::const_iterator it = cmps.begin ( );
-		     cmps.end ( ) != it; it++)
-			_completionComboBox->addItem ((*it).c_str ( ));
+		for (set<string>::const_iterator it = cmps.begin ( ); cmps.end ( ) != it; it++)
+		{
+//			_completionComboBox->addItem ((*it).c_str ( ));	// v 5.3.0
+			UTF8String	completion (charset);
+			if ((size_t)-1 != equalPos)	// => A = ...
+				completion	= left + head.utf8 ( )+ *it + tail.utf8 ( );
+			else
+				completion	= head.utf8 ( )+ *it + tail.utf8 ( );
+			_completionComboBox->addItem (completion.utf8 ( ).c_str ( ));	// v 5.3.0
+		}	// for (set<string>::const_iterator it = cmps.begin ( ); cmps.end ( ) != it; it++)
 		_completionComboBox->setCurrentIndex (0);
 		_completionComboBox->setGeometry (rect);
 		_completionComboBox->show ( );
 		_completionComboBox->showPopup ( );
-
+		
+		_checkingCompletion	= true;
 		try
 		{	// Python attend le choix (rlcompleter est interactif) :
 			execInstruction ("", false);
@@ -2210,6 +2221,9 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 		catch (...)
 		{
 		}
+		_currentExecLine	= currentLine;				// v 5.3.0 déplacé par mécanisme de complétion
+		_previousExecLine	= _checkingCompletion;		// v 5.3.0
+		_checkingCompletion	= false;
 	}	// if (0 != completions.size ( ))
 
 	return true;
@@ -2218,6 +2232,9 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 
 void QtPythonConsole::addToHistoric (const string& instruction)
 {	// On ne stocke pas 2 fois successivement la même instruction
+	if (true == _checkingCompletion)	// v 5.3.0
+		return;
+
 	const size_t	size	= _history.size ( );
 
 	if ((0 == size) || (_history [size - 1] != instruction))
@@ -2416,8 +2433,7 @@ void QtPythonConsole::execInstructions ( )
 
 	vector<string>	instructions	= getRunnableInstructions (_currentExecLine);
 	const bool		autoDelete	= true;
-	_currentScript.reset (
-		new QtPythonConsole::InstructionsFile (false, "python_panel_script_", QtPythonConsole::enableCodingIso8859_15, autoDelete));
+	_currentScript.reset (new QtPythonConsole::InstructionsFile (false, "python_panel_script_", QtPythonConsole::enableCodingIso8859_15, autoDelete));
 	_currentScript->addLines (instructions, _currentExecLine);
 	// 2 cas de figure : une ligne uniquement, on la traite telle que, permet d'avoir dans stdout des retours type "4" pour
 	// une ligne t.q. "2 + 2".
@@ -2507,7 +2523,12 @@ void QtPythonConsole::execInstructions ( )
 
 void QtPythonConsole::execDbgInstructions (bool stopImmediatly)
 {
+	size_t			line	= currentInstruction ( );						// v 6.2.0
+	QTextBlock		block	= document ( )->findBlockByNumber (line - 1);	// v 6.2.0
+	QTextCursor		cursor	= textCursor ( );								// v 6.2.0
+	cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);		// v 6.2.0
 	EndOfDocCursor	endOfDocCursor (*this);
+	endOfDocCursor.setEnabled (false);										// v 6.2.0
 
 	setRunningMode (QtPythonConsole::RM_DEBUG);
 	_halted	= false;
@@ -2515,9 +2536,7 @@ void QtPythonConsole::execDbgInstructions (bool stopImmediatly)
 
 	QString				text	= document ( )->toPlainText ( );
 	const bool			autoDelete	= false;
-	_currentScript.reset (
-		new QtPythonConsole::InstructionsFile (
-				true, "python_panel_script_", QtPythonConsole::enableCodingIso8859_15, autoDelete));
+	_currentScript.reset (new QtPythonConsole::InstructionsFile (true, "python_panel_script_", QtPythonConsole::enableCodingIso8859_15, autoDelete));
 
 	const vector<string>	instructions	= getRunnableInstructions (_currentExecLine);
 	vector<string>			ranInstructions;
@@ -2564,6 +2583,11 @@ void QtPythonConsole::execDbgInstructions (bool stopImmediatly)
 	_currentScript.reset (0);
 
 	validateCursorPosition ( );
+	line	= currentInstruction ( );										// v 6.2.0
+	block	= document ( )->findBlockByNumber (line - 1);					// v 6.2.0
+	cursor	= textCursor ( );												// v 6.2.0
+	cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);		// v 6.2.0
+	setTextCursor (cursor);													// v 6.2.0
 	updateActions ( );
 
 	if (false == error.empty ( ))
@@ -2581,15 +2605,18 @@ void QtPythonConsole::execInstruction (const string& instruction, bool insert)
 
 	CHECK_NULL_PTR_ERROR (document ( ))
 
-	if (true == insert)
+	if (false == _checkingCompletion)	// v 5.3.0
 	{
-		const size_t	line	= currentInstruction ( );
-		QTextBlock		block	= document ( )->findBlockByNumber (line - 1);
-		QTextCursor		cursor	= textCursor ( );
-		cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
-		cursor.insertText (instruction.c_str ( ));
-		cursor.insertText ("\n");
-	}	// if (true == insert)
+		if (true == insert)
+		{
+			const size_t	line	= currentInstruction ( );
+			QTextBlock		block	= document ( )->findBlockByNumber (line - 1);
+			QTextCursor		cursor	= textCursor ( );
+			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
+			cursor.insertText (instruction.c_str ( ));
+			cursor.insertText ("\n");
+		}	// if (true == insert)
+	}	// if (false == _checkingCompletion)
 
 	PyCompilerFlags	flags;
 //	flags.cf_flags		= CO_FUTURE_DIVISION;
@@ -2603,8 +2630,7 @@ void QtPythonConsole::execInstruction (const string& instruction, bool insert)
 	}
 	catch (...)
 	{	// on se retrouve en mode normal.
-		if ((QtPythonConsole::RM_DEBUG == getRunningMode ( )) &&
-		    (0 != _runningModeAction))
+		if ((QtPythonConsole::RM_DEBUG == getRunningMode ( )) && (0 != _runningModeAction))
 			_runningModeAction->setChecked (false);
 	}
 	unregisterConsole (*this);	// CP v 5.0.5
@@ -2730,12 +2756,17 @@ void QtPythonConsole::processPythonOutputs ( )
 {
 	try
 	{
-		if (false == QtPython::outputsString.empty ( ))
+		if (false == _checkingCompletion)	// v 5.3.0
 		{
-			ProcessLog	log ("", QtPython::outputsString);
-			getLogDispatcher ( ).log (log);
+			if (false == QtPython::outputsString.empty ( ))
+			{
+				ProcessLog	log ("", QtPython::outputsString);
+				getLogDispatcher ( ).log (log);
+				QtPython::outputsString.clear ( );
+			}	// if (false == outputsString.empty ( ))
+		}	// if (false == _checkingCompletion)
+		else
 			QtPython::outputsString.clear ( );
-		}	// if (false == outputsString.empty ( ))
 	}
 	catch (...)
 	{
@@ -2755,19 +2786,13 @@ void QtPythonConsole::runningModeCallback (bool debug)
 			if (true == instruction.partOfBlock ( ))
 			{
 				UTF8String	question (charset);
-				question << "Vous souhaitez quitter le mode debug à la ligne "
-				         << currentInstruction ( ) << " :\n"
+				question << "Vous souhaitez quitter le mode debug à la ligne " << currentInstruction ( ) << " :\n"
 				         << instruction.command ( )
-				         << "\nCette instruction est dans un bloc (par exemple "
-				         << "boucle for, while, do ... while, bloc "
-				         << "conditionnel if/then/else ou try/catch), cet "
-				         << "outil ne sera pas en mesure de reprendre en ce "
-				         << "point l'exécution du script, que ce soit en mode "
-				         << "normal ou debug.\n"
+				         << "\nCette instruction est dans un bloc (par exemple boucle for, while, do ... while, bloc "
+				         << "conditionnel if/then/else ou try/catch), cet outil ne sera pas en mesure de reprendre en ce "
+				         << "point l'exécution du script, que ce soit en mode normal ou debug.\n"
 				         << "Confirmez-vous la sortie du mode debug ?";
-				switch (QMessageBox::warning (this, getAppName ( ).c_str ( ),
-				        UTF8TOQSTRING (question), "Oui", "Annuler",
-				        QString ( ), 0, -1))
+				switch (QMessageBox::warning (this, getAppName ( ).c_str ( ), UTF8TOQSTRING (question), "Oui", "Annuler", QString ( ), 0, -1))
 				{
 					case	1	:
 					{
@@ -2784,16 +2809,13 @@ void QtPythonConsole::runningModeCallback (bool debug)
 	catch (const Exception& exc)
 	{
 		UTF8String	message (charset);
-		message << "Erreur lors du changement de mode d'exécution des "
-		        << "instructions python :"
-		        << "\n" << exc.getFullMessage ( );
+		message << "Erreur lors du changement de mode d'exécution des instructions python :\n" << exc.getFullMessage ( );
 		QtMessageBox::displayErrorMessage (this, getAppName ( ), message);
 	}
 	catch (...)
 	{
 		UTF8String	message (charset);
-		message << "Erreur non documentée lors du changement de mode "
-		        << "d'exécution des instructions python.";
+		message << "Erreur non documentée lors du changement de mode d'exécution des instructions python.";
 		QtMessageBox::displayErrorMessage (this, getAppName ( ), message);
 	}
 
@@ -2810,16 +2832,14 @@ void QtPythonConsole::runCallback ( )
 	catch (const Exception& exc)
 	{
 		UTF8String	message (charset);
-		message << "Erreur lors de l'exécution des instructions python :"
-		        << "\n" << exc.getFullMessage ( );
+		message << "Erreur lors de l'exécution des instructions python :" << "\n" << exc.getFullMessage ( );
 		log (ErrorLog (message));
 		QtMessageBox::displayErrorMessage (this, getAppName ( ), message);
 	}
 	catch (...)
 	{
 		UTF8String	message (charset);
-		message << "Erreur non documentée lors de l'exécution des instructions "
-		        << "python.";
+		message << "Erreur non documentée lors de l'exécution des instructions python.";
 		log (ErrorLog (message));
 		QtMessageBox::displayErrorMessage (this, getAppName ( ), message);
 	}
@@ -2949,8 +2969,7 @@ void QtPythonConsole::insertScriptCallback ( )
 		message << "Sélectionnez un script python.";
 
 		QString	fileName	 = QFileDialog::getOpenFileName (
-					this, UTF8TOQSTRING (message), getAppName ( ).c_str ( ),
-					"scripts python (*.py)", 0, QFileDialog::DontUseNativeDialog);
+					this, UTF8TOQSTRING (message), getAppName ( ).c_str ( ), "scripts python (*.py)", 0, QFileDialog::DontUseNativeDialog);
 		if (true == fileName.isEmpty ( ))
 			return;
 

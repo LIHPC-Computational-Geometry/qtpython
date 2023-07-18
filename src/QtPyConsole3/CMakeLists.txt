@@ -1,8 +1,10 @@
 set (CURRENT_PACKAGE_NAME "QtPyConsole3")
 
+find_package (GUIToolkitsVariables)
+
 include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
-include (${CMAKE_SOURCE_DIR}/cmake/common.cmake)
-include (${CMAKE_SOURCE_DIR}/cmake/workarounds.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
 
 find_package(Qt5Core NO_CMAKE_SYSTEM_PATH)
 

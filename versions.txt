@@ -1,13 +1,54 @@
+Version 6.3.0 : 21/06/23
+===============
+
+Sortie du projet GUIToolkits.
+
+GUIToolkitsVariables v 1.3.0 : python_binding.cmake v 0.5.0 (répertoire d'installation des modules déterminé par python).
+
+
+Version 6.2.0 : 06/06/23
+===============
+
+Correctif scrolling console en mode debug : la console défilait jusqu'à la fin, même en mode pas à pas ou lorsque l'exécution
+s'arrêtait sur un breakpoint.
+
+
+Version 6.1.1 : 03/05/23
+===============
+
+Correctif consoles python 2 et python 3 : numéro de ligne courante en sortie de QtPythonConsole::addToHistoric. Avait tendance
+à restreindre l'accès à la fonctionnalité de chargement d'un script.
+
+
+Version 6.1.0 : 31/03/23
+===============
+
+Portage GitHub environnement podman/spack/tests CI.
+
+
+Version 6.0.1 : 03/02/23
+===============
+
+Retouches cmake : blindage pour cas non gérés (versions Python).
+
+
+Version 6.0.0 : 10/01/23
+===============
+
+Intégration au projet GUIToolkits.
+
+
+Version 5.3.0 : 07/12/22
+===============
+
+Retouches mécanismes de complétion en Python 2 et 3. Les consoles python acceptent maintenant de traiter des
+expressions type  = objet.methode
+
+
 Version 5.2.0 : 29/11/22
 ================
 
 Suppression classe QtPythonPanel et dépendances QConsole.
-
-
-Version 5.1.10 : 25/11/22
-================
-
-Un peu de nettoyage (hors sources).
 
 
 Version 5.1.9 : 13/09/22
@@ -68,7 +109,7 @@ Retouches cmake pour interdire de chercher Qt dans les répertoires systèmes
 Version 5.1.1 : 10/09/21
 ===============
 
-Suppression de mini gros-mots et de balises EXPURGE.
+Divers nettoyage
 
 
 Version 5.1.0 : 06/09/21
