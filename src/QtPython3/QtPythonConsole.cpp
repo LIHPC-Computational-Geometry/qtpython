@@ -271,7 +271,10 @@ bool QtPythonConsole::Instruction::isRunnable (const string& instruction)
 // ============================================================================
 
 
-const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);
+// v 6.3.1 : on annule commentFormat, la colorisation QtPythonSyntaxHighlighter et il semble qu'il y ait un bogue (les commandes sont bleues dans certains cas
+// pour une raison non élucidée), mais où ???
+//const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);		// v 6.3.1
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);	// v 6.3.1
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
