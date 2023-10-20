@@ -1555,7 +1555,8 @@ void QtPythonConsole::lineProcessedCallback (const string& fileName, size_t line
 		ConsoleOutput::cerr ( ) << mess << co_endl;
 	}
 
-	lineProcessedCallback (consoleLine, true, error);
+	lineProcessedCallback (consoleLine, ok, error);		// v 6.3.1 (sinon ligne écrite 2 fois dans le script généré)
+//	lineProcessedCallback (consoleLine, true, error);
 }	// QtPythonConsole::lineProcessedCallback
 
 
@@ -1722,8 +1723,7 @@ void QtPythonConsole::addToHistoric (
 	if (linesCount > 1)
 	{
 		size_t	i	= 0;
-		for (vector<string>::const_iterator itl = lines.begin ( );
-		     lines.end ( ) != itl; itl++, i++)
+		for (vector<string>::const_iterator itl = lines.begin ( ); lines.end ( ) != itl; itl++, i++)
 		{
 			const string	comms (0 == i ? comments.utf8 ( ) : string ( ));
 			const string	out (0 == i ? commandOutput.utf8 ( )  : string ( ));
@@ -1748,15 +1748,19 @@ void QtPythonConsole::addToHistoric (
 		setTextCursor (cursor);
 		if (false == scriptingLog.getComment ( ).empty ( ))	// v 2.7.0
 		{
-			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )),
-				Charset::UTF_8);
+			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )), Charset::UTF_8);
+			const size_t		commentLineNum	= lineNumber (comment.utf8 ( ));	// v 6.3.1
 			line	+= lineNumber (comment.utf8 ( ));
 			cursor.insertText (UTF8TOQSTRING (comment));
 			cursor.insertText ("\n");
 			block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
+			line	-= commentLineNum;	// v 6.3.1
 		}	// if (false == scriptingLog.getComment ( ).empty ( ))
+		else
+			line--;		// v 6.3.1
+
 		if (true == statusErr)
 		{
 			UTF8String	error (charset);
@@ -2237,6 +2241,7 @@ void QtPythonConsole::addToHistoric (const string& instruction)
 
 	const size_t	size	= _history.size ( );
 
+cout << __FILE__ << ' ' << __LINE__ << " QtPythonConsole::addToHistoric. REGISTERING COMMAND=" << instruction << endl;
 	if ((0 == size) || (_history [size - 1] != instruction))
 		_history.push_back (instruction);
 
