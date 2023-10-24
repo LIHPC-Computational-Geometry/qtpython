@@ -271,7 +271,10 @@ bool QtPythonConsole::Instruction::isRunnable (const string& instruction)
 // ============================================================================
 
 
-const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);
+// v 6.3.2 : on annule commentFormat, la colorisation QtPythonSyntaxHighlighter et il semble qu'il y ait un bogue (les commandes sont bleues dans certains cas
+// pour une raison non élucidée), mais où ???
+//const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);		// v 6.3.2
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);	// v 6.3.2
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
@@ -1555,7 +1558,8 @@ void QtPythonConsole::lineProcessedCallback (const string& fileName, size_t line
 		ConsoleOutput::cerr ( ) << mess << co_endl;
 	}
 
-	lineProcessedCallback (consoleLine, true, error);
+	lineProcessedCallback (consoleLine, ok, error);		// v 6.3.2 (sinon ligne écrite 2 fois dans le script généré)
+//	lineProcessedCallback (consoleLine, true, error);
 }	// QtPythonConsole::lineProcessedCallback
 
 
@@ -1722,8 +1726,7 @@ void QtPythonConsole::addToHistoric (
 	if (linesCount > 1)
 	{
 		size_t	i	= 0;
-		for (vector<string>::const_iterator itl = lines.begin ( );
-		     lines.end ( ) != itl; itl++, i++)
+		for (vector<string>::const_iterator itl = lines.begin ( ); lines.end ( ) != itl; itl++, i++)
 		{
 			const string	comms (0 == i ? comments.utf8 ( ) : string ( ));
 			const string	out (0 == i ? commandOutput.utf8 ( )  : string ( ));
@@ -1748,15 +1751,19 @@ void QtPythonConsole::addToHistoric (
 		setTextCursor (cursor);
 		if (false == scriptingLog.getComment ( ).empty ( ))	// v 2.7.0
 		{
-			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )),
-				Charset::UTF_8);
+			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )), Charset::UTF_8);
+			const size_t		commentLineNum	= lineNumber (comment.utf8 ( ));	// v 6.3.2
 			line	+= lineNumber (comment.utf8 ( ));
 			cursor.insertText (UTF8TOQSTRING (comment));
 			cursor.insertText ("\n");
 			block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
+			line	-= commentLineNum;	// v 6.3.2
 		}	// if (false == scriptingLog.getComment ( ).empty ( ))
+		else
+			line--;		// v 6.3.2
+
 		if (true == statusErr)
 		{
 			UTF8String	error (charset);
