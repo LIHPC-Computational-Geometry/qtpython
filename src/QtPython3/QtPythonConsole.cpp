@@ -271,10 +271,10 @@ bool QtPythonConsole::Instruction::isRunnable (const string& instruction)
 // ============================================================================
 
 
-// v 6.3.1 : on annule commentFormat, la colorisation QtPythonSyntaxHighlighter et il semble qu'il y ait un bogue (les commandes sont bleues dans certains cas
+// v 6.3.2 : on annule commentFormat, la colorisation QtPythonSyntaxHighlighter et il semble qu'il y ait un bogue (les commandes sont bleues dans certains cas
 // pour une raison non élucidée), mais où ???
-//const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);		// v 6.3.1
-const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);	// v 6.3.1
+//const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);		// v 6.3.2
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);	// v 6.3.2
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
 const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
@@ -1558,7 +1558,7 @@ void QtPythonConsole::lineProcessedCallback (const string& fileName, size_t line
 		ConsoleOutput::cerr ( ) << mess << co_endl;
 	}
 
-	lineProcessedCallback (consoleLine, ok, error);		// v 6.3.1 (sinon ligne écrite 2 fois dans le script généré)
+	lineProcessedCallback (consoleLine, ok, error);		// v 6.3.2 (sinon ligne écrite 2 fois dans le script généré)
 //	lineProcessedCallback (consoleLine, true, error);
 }	// QtPythonConsole::lineProcessedCallback
 
@@ -1752,17 +1752,17 @@ void QtPythonConsole::addToHistoric (
 		if (false == scriptingLog.getComment ( ).empty ( ))	// v 2.7.0
 		{
 			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )), Charset::UTF_8);
-			const size_t		commentLineNum	= lineNumber (comment.utf8 ( ));	// v 6.3.1
+			const size_t		commentLineNum	= lineNumber (comment.utf8 ( ));	// v 6.3.2
 			line	+= lineNumber (comment.utf8 ( ));
 			cursor.insertText (UTF8TOQSTRING (comment));
 			cursor.insertText ("\n");
 			block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
-			line	-= commentLineNum;	// v 6.3.1
+			line	-= commentLineNum;	// v 6.3.2
 		}	// if (false == scriptingLog.getComment ( ).empty ( ))
 		else
-			line--;		// v 6.3.1
+			line--;		// v 6.3.2
 
 		if (true == statusErr)
 		{
@@ -2244,7 +2244,6 @@ void QtPythonConsole::addToHistoric (const string& instruction)
 
 	const size_t	size	= _history.size ( );
 
-cout << __FILE__ << ' ' << __LINE__ << " QtPythonConsole::addToHistoric. REGISTERING COMMAND=" << instruction << endl;
 	if ((0 == size) || (_history [size - 1] != instruction))
 		_history.push_back (instruction);
 
