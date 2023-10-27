@@ -313,8 +313,10 @@ bool QtPythonConsole::Instruction::isRunnable (const string& instruction)
 //                LA CLASSE QtPythonConsole::QtScriptTextFormat
 // ============================================================================
 
-
-const QtPythonConsole::QtScriptTextFormat QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);
+// v 6.3.3 : on annule commentFormat, la colorisation QtPythonSyntaxHighlighter et il semble qu'il y ait un bogue (les commandes sont bleues dans certains cas
+// pour une raison non élucidée), mais où ???
+//const QtPythonConsole::QtScriptTextFormat QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::COMMENT);		// v 6.3.3
+const QtPythonConsole::QtScriptTextFormat	QtPythonConsole::QtScriptTextFormat::commentFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);	// v 6.3.3
 const QtPythonConsole::QtScriptTextFormat QtPythonConsole::QtScriptTextFormat::emptyLineFormat (QtPythonConsole::QtScriptTextFormat::BLANK);
 const QtPythonConsole::QtScriptTextFormat QtPythonConsole::QtScriptTextFormat::instructionFormat (QtPythonConsole::QtScriptTextFormat::INSTRUCTION);
 const QtPythonConsole::QtScriptTextFormat QtPythonConsole::QtScriptTextFormat::ranInstructionFormat (QtPythonConsole::QtScriptTextFormat::RAN_INSTRUCTION);
@@ -1937,6 +1939,7 @@ void QtPythonConsole::addToHistoric (const UTF8String& command, const UTF8String
 		if (false == scriptingLog.getComment ( ).empty ( ))	// v 2.7.0
 		{
 			const UTF8String	comment (PythonLogOutputStream::toComment (scriptingLog.getComment ( )), Charset::UTF_8);
+			const size_t		commentLineNum	= lineNumber (comment.utf8 ( ));	// v 6.3.3
 			line	+= lineNumber (comment.utf8 ( ));
 //			cursor.insertText ("# ");	// v 3.5.0
 			cursor.insertText (UTF8TOQSTRING (comment));
@@ -1945,7 +1948,11 @@ void QtPythonConsole::addToHistoric (const UTF8String& command, const UTF8String
 			block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
+			line	-= commentLineNum;	// v 6.3.3
 		}	// if (false == scriptingLog.getComment ( ).empty ( ))
+		else
+			line--;		// v 6.3.3
+			
 		if (true == statusErr)
 		{
 //			line++;	// CP 1.11.0
