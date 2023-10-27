@@ -1,3 +1,11 @@
+Version 6.3.3 : 27/10/23
+===============
+
+Correctifs console python 2 : 
+- gestion de l'historique avec les touches flèche haut/bas.
+- gestion couleur des affichages (parfois en bleu à la place du noir).
+
+
 Version 6.3.2 : 24/10/23
 ===============
 
