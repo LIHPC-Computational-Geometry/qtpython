@@ -35,38 +35,53 @@ QtPythonSyntaxHighlighter::QtPythonSyntaxHighlighter (QTextDocument* parent)
 	                << "\\b__\\*\\b";
 	foreach (const QString& pattern, keywordPatterns)
 	{
+#ifdef QT_5
 		rule.pattern	= QRegExp (pattern);
+#else   // QT_5
+		rule.pattern	= QRegularExpression (pattern);
+#endif  // QT_5
+
 		rule.format		= keywordFormat;
 		_highlightingRules.append (rule);
 	}	// foreach (const QString& pattern, keywordPatterns)
 
 	quotationFormat.setForeground (Qt::red);
+#ifdef QT_5
 	rule.pattern	= QRegExp ("\".*\"");
+#else   // QT_5
+	rule.pattern	= QRegularExpression ("\".*\"");
+#endif  // QT_5
 	rule.format		= quotationFormat;
 	_highlightingRules.append (rule);
 	quotationFormat.setFontItalic (true);
 	quotationFormat.setForeground (Qt::cyan);
+#ifdef QT_5
 	rule.pattern	= QRegExp ("\\b[A-Za-z0-9__]+(?=\\()");
+#else   // QT_5
+	rule.pattern	= QRegularExpression ("\\b[A-Za-z0-9__]+(?=\\()");
+#endif  // QT_5
 	rule.format		= functionFormat;
 	_highlightingRules.append (rule);
 	singleLineFormat.setForeground (Qt::blue);
+#ifdef QT_5
 	rule.pattern	= QRegExp ("#[^\n]*");
+#else   // QT_5
+	rule.pattern	= QRegularExpression ("#[^\n]*");
+#endif  // QT_5
 	rule.format		= singleLineFormat;
 	_highlightingRules.append (rule);
 }	// QtPythonSyntaxHighlighter::QtPythonSyntaxHighlighter
 
 
 
-QtPythonSyntaxHighlighter::QtPythonSyntaxHighlighter (
-											const QtPythonSyntaxHighlighter&)
+QtPythonSyntaxHighlighter::QtPythonSyntaxHighlighter (const QtPythonSyntaxHighlighter&)
 	: QSyntaxHighlighter ((QTextDocument*)0)
 {
 	assert (0 && "QtPythonSyntaxHighlighter copy constructor is not allowed.");
 }	// QtPythonSyntaxHighlighter::QtPythonSyntaxHighlighter
 
 
-QtPythonSyntaxHighlighter& QtPythonSyntaxHighlighter::operator = (
-											const QtPythonSyntaxHighlighter&)
+QtPythonSyntaxHighlighter& QtPythonSyntaxHighlighter::operator = (const QtPythonSyntaxHighlighter&)
 {
 	assert (0 && "QtPythonSyntaxHighlighter copy constructor is not allowed.");
 	return *this;
@@ -82,7 +97,9 @@ void QtPythonSyntaxHighlighter::highlightBlock (const QString& text)
 {
 	foreach (const HighlightingRule& rule, _highlightingRules)
 	{
+#ifdef QT_5
 		QRegExp	expression (rule.pattern);
+
 		int		index	= expression.indexIn (text);
 		while (index >= 0)
 		{
@@ -93,12 +110,20 @@ void QtPythonSyntaxHighlighter::highlightBlock (const QString& text)
 			// Sécurité contre une expression mal formulée (=> boucle infinie) :
 			if (length <= 0)
 			{
-				cerr << __FILE__ << ' ' << __LINE__
-				     << " Erreur de formulation de l'expression régulière "
-				     << expression.pattern ( ).toStdString ( ) << endl;
+				cerr << __FILE__ << ' ' << __LINE__ << " Erreur de formulation de l'expression régulière " << expression.pattern ( ).toStdString ( ) << endl;
 				break;
 			}	// if (length <= 0)
 		}	// while (index >= 0)
+#else   // QT_5
+		QRegularExpression	expression (rule.pattern);
+
+		QRegularExpressionMatchIterator	it = expression.globalMatch (text);
+		while (it.hasNext ( ))
+		{
+			QRegularExpressionMatch	match = it.next ( );
+			setFormat (match.capturedStart ( ), match.capturedLength ( ), rule.format);
+		}	// while (it.hasNext ( ))
+#endif  // QT_5
 	}	// foreach (const HighlightingRule& rule, _highlightingRules)
 }	// QtPythonSyntaxHighlighter::highlightBlock
 

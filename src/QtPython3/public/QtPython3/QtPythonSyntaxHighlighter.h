@@ -2,7 +2,9 @@
 #define QT_PYTHON_SYNTAX_HIGHLIGHTER_H
 
 #include <QSyntaxHighlighter>
-
+#ifndef QT_5
+#	include <QRegularExpression>
+#endif	// QT_5
 
 /**
  * Classe permettant la mise en évidence des mots clés du langage python dans
@@ -46,7 +48,12 @@ class QtPythonSyntaxHighlighter : public QSyntaxHighlighter
 
 	struct HighlightingRule
 	{
-		QRegExp			pattern;
+#ifdef QT_5
+		QRegExp				pattern;
+#else   // QT_5
+		QRegularExpression	pattern;
+#endif  // QT_5
+
 		QTextCharFormat	format;
 	};	// struct HighlightingRule
 

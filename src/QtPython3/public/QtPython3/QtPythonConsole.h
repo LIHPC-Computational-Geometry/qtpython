@@ -18,15 +18,9 @@ typedef struct _object PyObject;
 
 #include <QSettings>
 #include <QIcon>
-#ifndef QT_5
-#include <QtGui/QComboBox>
-#include <QtGui/QMainWindow>
-#include <QtGui/QToolBar>
-#else	// QT_5
 #include <QComboBox>
 #include <QMainWindow>
 #include <QToolBar>
-#endif	// QT_5
 
 #include <fstream>
 #include <memory>
