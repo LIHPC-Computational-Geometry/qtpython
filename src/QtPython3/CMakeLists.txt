@@ -5,6 +5,7 @@ find_package (GUIToolkitsVariables)
 
 include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/common_qt.cmake)     # QT_MAJOR
 include (${GUIToolkitsVariables_CMAKE_DIR}/python_binding.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
 
@@ -13,7 +14,7 @@ set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
 
 find_package (QtUtil 6 REQUIRED)
 find_package (PythonUtil 6 REQUIRED)
-find_package(Qt5Core NO_CMAKE_SYSTEM_PATH)	# In order to enable moc ...
+find_package(Qt${QT_MAJOR}Core NO_CMAKE_SYSTEM_PATH)	# In order to enable moc ...
 
 file (GLOB HEADERS public/${CURRENT_PACKAGE_NAME}/*.h)
 file (GLOB CPP_SOURCES *.cpp *.qrc)
@@ -26,10 +27,10 @@ set_property (TARGET QtPython3 PROPERTY AUTORCC ON)
 set (ALL_TARGETS QtPython3)
 set_property (TARGET QtPython3 PROPERTY VERSION ${QT_PYTHON_3_VERSION})
 set_property (TARGET QtPython3 PROPERTY SOVERSION ${QT_PYTHON_3_MAJOR_VERSION})
-set (QT_LIB_DEPENDENCIES Qt5::Widgets Qt5::Gui Qt5::Core)
-set (QT_INC_DEPENDENCIES ${Qt5Gui_INCLUDE_DIRS} ${Qt5Core_INCLUDE_DIRS})
+set (QT_LIB_DEPENDENCIES Qt${QT_MAJOR}::Widgets Qt${QT_MAJOR}::Gui Qt${QT_MAJOR}::Core)
+set (QT_INC_DEPENDENCIES ${Qt${QT_MAJOR}Gui_INCLUDE_DIRS} ${Qt${QT_MAJOR}Core_INCLUDE_DIRS})
 # Rem : en Qt v 4.* on utilise -DUSE_QT_WEBKIT
-set (QT_PYTHON_3_PUBLIC_FLAGS -DQT_5)
+set (QT_PYTHON_3_PUBLIC_FLAGS -DQT_${QT_MAJOR})
 set (QT_PYTHON_3_PRIVATE_FLAGS -DQT_PYTHON_VERSION="${QT_PYTHON_3_VERSION}")
 
 # REM : on avait historiquement l'instruction suivante, pour contourner un bogue icpc sur plateforme Bull :

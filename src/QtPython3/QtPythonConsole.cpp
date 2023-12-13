@@ -17,15 +17,9 @@
 
 #include <QThread>
 #include <QPainter>
-#ifndef QT_5
-#include <QtGui/QAction>
-#include <QtGui/QFileDialog>
-#include <QtGui/QMenu>
-#else	// QT_5
 #include <QAction>
 #include <QFileDialog>
 #include <QMenu>
-#endif	// QT_5
 
 #include <frameobject.h>// PyFrameObject
 
@@ -1318,7 +1312,11 @@ void QtPythonConsole::addSwigCompletions (vector<string>& completions, const str
 	{
 		const string	msg	= exc.getFullMessage ( ).utf8 ( );
 		const QString	qmsg (msg.c_str ( ));
+#ifdef QT_5
 		QStringList		lines	= qmsg.split ("\n", QString::KeepEmptyParts);
+#else	// QT_5
+		QStringList		lines	= qmsg.split ("\n", Qt::KeepEmptyParts);
+#endif	// QT_5
 		const	size_t	num		= lines.size ( );
 		if (1 == num)	// On fait comme on peut ...
 			completions.push_back(cppToPython (getSwigCompletion (expression)));
@@ -2722,7 +2720,12 @@ vector<string> QtPythonConsole::getRunnableInstructions (size_t first) const
 {
 	vector<string>	instructions;
 	QString			text	= document ( )->toPlainText ( );
+#ifdef QT_5
 	QStringList		lines	= QString (text).split ("\n", QString::KeepEmptyParts);
+#else	// QT_5
+	QStringList		lines	= QString (text).split ("\n", Qt::KeepEmptyParts);
+#endif	// QT_5
+
 	// On élimine les lignes blanches finales :
 	size_t	last	= lines.size ( );
 	for (size_t i = last; i != 0; i--)
