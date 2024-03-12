@@ -37,9 +37,7 @@ USE_ENCODING_AUTODETECTION
 
 
 
-/* On utilise la fonction python builtin execfile pour exécuter sous Pdb
- * des fichiers. Fonctionne bien avec Python 2.6 et 2.7, Pdb s'arrête bien aux
- * points d'arrêt demandés.
+/* On utilise la fonction python builtin execfile pour exécuter sous Pdb des fichiers. Fonctionne bien avec Python 2.6 et 2.7, Pdb s'arrête bien aux points d'arrêt demandés.
  * Pb : cette fonction n'existe plus en Python 3.x, il faudra la réécrire.
  */
 //#define USE_EXECFILE_PYTHON_FUNCTION	1
@@ -383,9 +381,7 @@ void QtPythonConsole::InstructionsFile::addLines (const vector<string>& lines, s
 		throw exc;
 	}	// if (0 == _tmpStream.get ( ))
 
-	// Attention : on peut appeler addLines plusieurs fois pour le même
-	// script ... _firstLineNum sert ensuite pour faire les conversions
-	// num script <-> num fichier
+	// Attention : on peut appeler addLines plusieurs fois pour le même script ... _firstLineNum sert ensuite pour faire les conversions num script <-> num fichier
 	if (0 == _firstLineNum)
 		_firstLineNum	= firstLineNum;
 	for (vector<string>::const_iterator it = lines.begin ( ); lines.end ( ) != it; it++)
@@ -585,7 +581,6 @@ const QSize	QtPythonConsole::iconSize (32, 32);
 bool		QtPythonConsole::_catchStdOutputs		= true;
 
 static QTextBlockFormat	defaultBlockFormat;
-static QTextCharFormat	defaultCharFormat;
 static QBrush			defaultBackground;
 
 
@@ -755,7 +750,6 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 {
 	setCenterOnScroll (true);
 	QTextCursor	cursor	= textCursor ( );
-	defaultCharFormat	= cursor.charFormat ( );
 	defaultBlockFormat	= cursor.blockFormat ( );
 	defaultBackground	= defaultBlockFormat.background ( );
 	
@@ -945,11 +939,9 @@ void QtPythonConsole::drawLinesNumbers (const QRect& rect)
 	{
 		if ((true == block.isVisible ( )) && (bottom >= rect.top ( )))
 		{
-			// Rem : sous Qt 4.7.4 la surimpression (breakpoint, et par dessus
-			// ligne actuelle) ne fonctionne pas ... (pixmap ? autre ?)
+			// Rem : sous Qt 4.7.4 la surimpression (breakpoint, et par dessus ligne actuelle) ne fonctionne pas ... (pixmap ? autre ?)
 			// => on n'affiche pas le BP si ligne courrante.
-			if ((_breakpoints.end ( ) != _breakpoints.find (number)) &&
-			    (currentInstruction ( ) != number))
+			if ((_breakpoints.end ( ) != _breakpoints.find (number)) && (currentInstruction ( ) != number))
 			{
 				_breakPointIcon.paint (&painter, 3, top, width, height);
 			}	// if (_breakpoints.end ( ) != _breakpoints.find (number))
@@ -1021,8 +1013,7 @@ void QtPythonConsole::insert (const string& fileName, string& warnings)
 //	streamCharset						= Charset::UNKNOWN == streamCharset ? Charset::ASCII : streamCharset;
 	streamCharset						= Charset::UNKNOWN == streamCharset ? Charset::UTF_8 : streamCharset;	// v 5.1.7, éviter un rejet de conversion si caractère accentué
 
-	// UTF-16 : les sauts de ligne ne sont pas des \n => réécrire différemment
-	// la lecture du fichier.
+	// UTF-16 : les sauts de ligne ne sont pas des \n => réécrire différemment la lecture du fichier.
 	if (Charset::UTF_16 == streamCharset)
 		throw Exception ("Encodage UTF-16 non supporté dans cette version.");
 
@@ -1252,7 +1243,6 @@ void QtPythonConsole::validateCursorPosition ( )
 				// Les 2 instructions suivantes sont nécessaires pour que les
 				// lignes ajoutées ne soient pas en mode "exécutées" :
 				cursor.setBlockFormat (defaultBlockFormat);
-				setCurrentCharFormat (defaultCharFormat);
 				appendPlainText ("");
 			}
 		}	// if (_currentExecLine > document ( )->blockCount ( ))
@@ -1260,7 +1250,6 @@ void QtPythonConsole::validateCursorPosition ( )
 		{
 			block	= document ( )->findBlockByNumber (_currentExecLine - 1);
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
-			cursor.setCharFormat (defaultCharFormat);
 			cursor.setBlockFormat (defaultBlockFormat);
 		}	// else if (_currentExecLine > document ( )->blockCount ( ))
 	}
@@ -1568,7 +1557,7 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 		// Gérer les sorties du script python :
 		processPythonOutputs ( );
 		if (true == _checkingCompletion)
-			return;		// v 5.3.0
+			return;
 	
 		// Cette ligne a été jouée (rem : les numéros Qt commencent à 0 ...) :
 		QTextBlock			block		= document ( )->findBlockByNumber (line-1);
@@ -1580,6 +1569,8 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 			if (false == isComment)
 			{
 				// Tant que les lignes précédentes sont des commentaires on les récupère pour les ajouter au fichier script.
+				QTextBlockFormat	bformat	= block.blockFormat ( );	// v6.4.1
+				bformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));	// v 6.4.1
 				UTF8String	comments (Charset::UTF_8);
 				size_t			bl	= true == isComment ? line - 1 : line - 2;
 				bool			stopped	= 2 > bl ? true : false;
@@ -1593,7 +1584,13 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 						bl	= bl < line - 1 ? bl + 1 : line - 1;
 					}
 					else
+					{
+						QTextCursor			cursor (b);					// v 6.4.1
+						cursor.select (QTextCursor::LineUnderCursor);	// v 6.4.1
+
+						cursor.setBlockFormat (bformat);				// v 6.4.1
 						bl--;
+					}	// else if ((true == l.empty ( )) || ('#' != l [0]) || (bl <= 0))
 				}	// while (false == stopped)
 				for (size_t i = bl; i < line - 1; i++)
 				{
@@ -1608,40 +1605,26 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 				getLogDispatcher ( ).log (ScriptingLog (instruction, comments));
 			}	// if (false == isComment)
 		}	// if (line >= maxExecLine ( ))
-		// QTextCharFormat	 : zone avec du texte
-		// QTextBlockFormat : le reste du bloc
-		QTextCharFormat		cformat	= block.charFormat ( );
 		QTextBlockFormat	bformat	= block.blockFormat ( );
-		cformat.setProperty (QTextFormat::FullWidthSelection, true);
 		bformat.setProperty (QTextFormat::FullWidthSelection, true);
-		cformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
-		bformat.setBackground ( true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
-		QTextCursor			cursor	= textCursor ( );
-		const int			position= cursor.position ( );
-		cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
-		cursor.select (QTextCursor::BlockUnderCursor);
-		cursor.setCharFormat (cformat);		// v 5.0.0
-		cursor.setBlockFormat (bformat);	// v 5.0.0
+		bformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
+		QTextCursor			cursor (block);		// v 6.4.1
+		cursor.select (QTextCursor::LineUnderCursor);	// v 6.4.1 why BlockUnderCursor does not work ???
+		cursor.setBlockFormat (bformat);
+
 		if (true == cursor.atEnd ( ))
 		{
 			cursor.clearSelection ( );
 			QTextBlockFormat	newformat	= block.blockFormat ( );
 			bformat.setBackground (QtScriptTextFormat::emptyLineFormat.background ( ));
-			//cursor.insertBlock (newformat, QtScriptTextFormat::emptyLineFormat);
 			cursor.setBlockFormat (newformat);
-			cursor.setCharFormat (QtScriptTextFormat::emptyLineFormat);
 			cursor.insertBlock (newformat, QtScriptTextFormat::emptyLineFormat);
-			//appendPlainText ("");	// v 5.0.0
 		}	// if (true == cursor.atEnd ( ))
 		addToHistoric (instruction);
-//		cursor.setCharFormat (cformat);		// v 5.0.0
-//		cursor.setBlockFormat (bformat);	// v 5.0.0
 		cursor.clearSelection ( );
 		// On en profite pour s'assurer que la ligne courante est visible :
 		setTextCursor (cursor);
 		ensureCursorVisible ( );
-		// On se repositionne là où on était :
-		cursor.setPosition (position, QTextCursor::MoveAnchor);
 
 		// On passe à la ligne suivante :
 		_maxExecLine		= line > _maxExecLine ? line : _maxExecLine;
@@ -1736,7 +1719,6 @@ void QtPythonConsole::addToHistoric (
 	}	// if (linesCount > 1)
 
 	size_t	line	= currentInstruction ( );
-//	if ((false == isRunning ( )) || (true == isExecutingFile ( )))
 	if ((false == isRunning ( )) || ((true == isExecutingFile ( )) && (QtPythonConsole::RM_DEBUG != _runningMode)))	// v 5.0.5, en mode debug l'exécution de la console passe par un fichier ...
 	{
 		if (line < currentInstruction ( ))	// Eviter de réécrire les boucles
@@ -1786,7 +1768,6 @@ void QtPythonConsole::addToHistoric (
 		QTextCharFormat	defaultBlockCharFormat	= cursor.blockCharFormat ( );
 		defaultBlockCharFormat.setBackground (defaultBackground);
 		cursor.setBlockCharFormat (defaultBlockCharFormat);
-		setCurrentCharFormat (defaultCharFormat);
 		line	+= lineNumber (scriptingLog.getText ( ).utf8 ( )) - 1;
 		cursor.insertText (UTF8TOQSTRING (scriptingLog.getText ( )));
 		cursor.insertText ("\n");
@@ -1803,13 +1784,9 @@ void QtPythonConsole::addToHistoric (
 			QTextCursor		cursor	= textCursor ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
-			QTextCharFormat		charFormat	= cursor.charFormat ( );
-			charFormat.setBackground (QtScriptTextFormat::failedInstructionFormat.background ( ));
-			cursor.setCharFormat (charFormat);
 			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
 			cursor.setBlockFormat (defaultBlockFormat);
-			setCurrentCharFormat (defaultCharFormat);
 			setTextCursor (cursor);
 
 			// Faut-il arrêter l'exécution du script ?
@@ -2036,10 +2013,8 @@ bool QtPythonConsole::handleDownKeyPress (QKeyEvent& event)
 		if (currentLine != instruction)
 		{
 			QTextCursor	cursor	= textCursor ( );
-//			cursor.movePosition (QTextCursor::StartOfLine);
-//			cursor.movePosition (QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-			cursor.movePosition (QTextCursor::StartOfBlock);							// v 5.0.0
-			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);		// v 5.0.0
+			cursor.movePosition (QTextCursor::StartOfBlock);
+			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
 			cursor.insertText (instruction.c_str ( ));
 		}	// if (currentLine != instruction)
 	}	// if (_historyIndex < size)
@@ -2068,10 +2043,8 @@ bool QtPythonConsole::handleUpKeyPress (QKeyEvent& event)
 		if (currentLine != instruction)
 		{
 			QTextCursor	cursor	= textCursor ( );
-//			cursor.movePosition (QTextCursor::StartOfLine);
-//			cursor.movePosition (QTextCursor::EndOfLine, QTextCursor::KeepAnchor);
-			cursor.movePosition (QTextCursor::StartOfBlock);							// v 5.0.0
-			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);		// v 5.0.0
+			cursor.movePosition (QTextCursor::StartOfBlock);
+			cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::KeepAnchor);
 			cursor.insertText (instruction.c_str ( ));
 		}	// if (currentLine != instruction)
 	}	// if (_historyIndex < _history.count ( ))
@@ -2131,8 +2104,7 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 		try
 		{
 			UTF8String	request (charset);
-//			request << "NECCompletionSession.instance ( ).complete ('" << editedInstruction ( ) << "'," << i << ")";
-			request << "NECCompletionSession.instance ( ).complete ('" << trimedInstruction << "'," << i << ")";	// v 5.3.0
+			request << "NECCompletionSession.instance ( ).complete ('" << trimedInstruction << "'," << i << ")";
 
 			PyCompilerFlags	flags;
 //			flags.cf_flags	= CO_FUTURE_DIVISION;
@@ -2205,13 +2177,12 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 		cmps.insert (completions.begin ( ), completions.end ( ));
 		for (set<string>::const_iterator it = cmps.begin ( ); cmps.end ( ) != it; it++)
 		{
-//			_completionComboBox->addItem ((*it).c_str ( ));	// v 5.3.0
 			UTF8String	completion (charset);
 			if ((size_t)-1 != equalPos)	// => A = ...
 				completion	= left + head.utf8 ( )+ *it + tail.utf8 ( );
 			else
 				completion	= head.utf8 ( )+ *it + tail.utf8 ( );
-			_completionComboBox->addItem (completion.utf8 ( ).c_str ( ));	// v 5.3.0
+			_completionComboBox->addItem (completion.utf8 ( ).c_str ( ));
 		}	// for (set<string>::const_iterator it = cmps.begin ( ); cmps.end ( ) != it; it++)
 		_completionComboBox->setCurrentIndex (0);
 		_completionComboBox->setGeometry (rect);
@@ -2226,8 +2197,8 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 		catch (...)
 		{
 		}
-		_currentExecLine	= currentLine;				// v 5.3.0 déplacé par mécanisme de complétion
-		_previousExecLine	= _checkingCompletion;		// v 5.3.0
+		_currentExecLine	= currentLine;
+		_previousExecLine	= _checkingCompletion;
 		_checkingCompletion	= false;
 	}	// if (0 != completions.size ( ))
 
@@ -2237,7 +2208,7 @@ bool QtPythonConsole::handleComplete (QKeyEvent& event)
 
 void QtPythonConsole::addToHistoric (const string& instruction)
 {	// On ne stocke pas 2 fois successivement la même instruction
-	if (true == _checkingCompletion)	// v 5.3.0
+	if (true == _checkingCompletion)
 		return;
 
 	const size_t	size	= _history.size ( );
@@ -2375,8 +2346,9 @@ size_t QtPythonConsole::followingInstruction (size_t line) const
 void QtPythonConsole::addInstruction (const string& instruction)
 {
 	// Un instruction en cours est peut être à compléter :
+	const size_t	pendingLinesCount	= Instruction (_pendingString).lineCount ( );	// v 6.4.1
 	_pendingString	+= instruction;
-
+	
 	// Commentaire, ligne blanche, ... : on ajoute et on passe à la suite.
 	bool		completed	= false;
 	if ((0 == _pendingString.size ( )) || ('#' == _pendingString [0]))
@@ -2400,11 +2372,10 @@ void QtPythonConsole::addInstruction (const string& instruction)
 		}
 	}	// if (false == completed)
 	else
-	{	// v 5.1.5 : cas de l'insertion d'un commentaire multiligne. A noter qu'un bogue subsiste et qu'on peut
-		// observer un décalage entre commentaires et instructions associées.
+	{	// v 5.1.5 : cas de l'insertion d'un commentaire multiligne. A noter qu'un bogue subsiste et qu'on peut observer un décalage entre commentaires et instructions associées.
 		if ((0 != _pendingString.size ( )) && ('#' == _pendingString [0]))
 		{
-			_pendingString	= '\n' + _pendingString;
+//			_pendingString	= '\n' + _pendingString;	v 6.4.1
 			const size_t	count	= Instruction (_pendingString).lineCount ( );
 			_currentExecLine	+= count;
 		}	// if ((0 != _pendingString.size ( )) && ('#' == _pendingString [0]))
@@ -2413,7 +2384,6 @@ void QtPythonConsole::addInstruction (const string& instruction)
 	if (true == completed)
 	{
 		Instruction		ins (_pendingString);
-		setCurrentCharFormat (QtPythonConsole::QtScriptTextFormat::textFormat (ins));
 		_pendingString	+= '\n';
 		insertPlainText  (QString::fromUtf8(_pendingString.c_str( )));
 		_pendingString.clear ( );
@@ -2426,7 +2396,7 @@ void QtPythonConsole::addInstruction (const string& instruction)
 
 void QtPythonConsole::execInstructions ( )
 {
-	EndOfDocCursor	endOfDocCursor (*this);
+//	EndOfDocCursor	endOfDocCursor (*this);	241
 
 	setRunningMode (QtPythonConsole::RM_CONTINUOUS);
 	_running	= true;
@@ -2440,8 +2410,7 @@ void QtPythonConsole::execInstructions ( )
 	const bool		autoDelete	= true;
 	_currentScript.reset (new QtPythonConsole::InstructionsFile (false, "python_panel_script_", QtPythonConsole::enableCodingIso8859_15, autoDelete));
 	_currentScript->addLines (instructions, _currentExecLine);
-	// 2 cas de figure : une ligne uniquement, on la traite telle que, permet d'avoir dans stdout des retours type "4" pour
-	// une ligne t.q. "2 + 2".
+	// 2 cas de figure : une ligne uniquement, on la traite telle que, permet d'avoir dans stdout des retours type "4" pour une ligne t.q. "2 + 2".
 	// C'est le fait d'être en une seule instruction + Py_single_input qui offre cette possibilité là.
 	// Pour les autres cas on reste avec Py_file_input qui est dédié aux cas multilignes.
 	PyObject*		result			= 0;
@@ -2490,8 +2459,6 @@ void QtPythonConsole::execInstructions ( )
 	_running					= false;
 	_halted						= true;
 
-	// Actualisation IHM :
-	const size_t	lastAt	= ++_currentExecLine;
 	_currentScript.reset (0);
 
 	validateCursorPosition ( );
@@ -2569,12 +2536,12 @@ void QtPythonConsole::execDbgInstructions (bool stopImmediatly)
 	{
 		error	= exc.getFullMessage ( );
 		// addToHistoric ici car il faut false == isRunning ( )
-		addToHistoric ("", "", error, true, false);
+//		addToHistoric ("", "", error, true, false);	// v 6.4.1
 	}
 	catch (...)
 	{
 		// addToHistoric ici car il faut false == isRunning ( )
-		addToHistoric ("", "", error, true, false);
+//		addToHistoric ("", "", error, true, false);	// v 6.4.1
 		error	= "Erreur non documentée.";
 	}
 	unregisterConsole (*this);
@@ -2628,7 +2595,7 @@ void QtPythonConsole::execInstruction (const string& instruction, bool insert)
 	flags.cf_flags		= 0;
 	PyObject*	result	= 0;
 
-	registerConsole (*this);	// CP v 5.0.5
+	registerConsole (*this);
 	try
 	{	// gérer les erreurs C++ de l'API appelée
 		result	= PyRun_StringFlags (instruction.c_str ( ), Py_file_input, _globalDict, _localDict, &flags);
@@ -2638,7 +2605,7 @@ void QtPythonConsole::execInstruction (const string& instruction, bool insert)
 		if ((QtPythonConsole::RM_DEBUG == getRunningMode ( )) && (0 != _runningModeAction))
 			_runningModeAction->setChecked (false);
 	}
-	unregisterConsole (*this);	// CP v 5.0.5
+	unregisterConsole (*this);
 
 	processPythonOutputs ( );
 
@@ -2652,11 +2619,6 @@ void QtPythonConsole::execInstruction (const string& instruction, bool insert)
 		throw Exception (error);
 	}	// if (0 != retCode)
 	Py_DECREF (result);
-
-	// Actualisation IHM :
-// v 5.0.5 : déjà appelé via tracePythonExecution
-//	if (true == insert)
-//			lineProcessedCallback (_currentExecLine, true, string ( ));
 }	// QtPythonConsole::execInstruction
 
 
@@ -3035,6 +2997,7 @@ void QtPythonConsole::cursorPositionCallback ( )
 	try
 	{
 		QtTextEditor::cursorPositionCallback ( );	// presumed no throw
+		validateCursorPosition ( );	// v 6.4.1 : s'assurer qu'il y a au moins un point d'insertion de texte (ex : suite backspace sur la seule ligne éditable)
 		updateActions ( );
 	}
 	catch (...)
