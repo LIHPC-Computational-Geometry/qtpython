@@ -1,4 +1,4 @@
-Version 6.4.1 : (en cours) 12/03/24
+Version 6.4.1 : 15/03/24
 ===============
 
 Divers correctifs console python 3 (environnement Qt 5).

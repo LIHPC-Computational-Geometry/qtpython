@@ -580,7 +580,10 @@ bool		QtPythonConsole::stopOnError			= true;
 const QSize	QtPythonConsole::iconSize (32, 32);
 bool		QtPythonConsole::_catchStdOutputs		= true;
 
+// QTextCharFormat 	: zone avec du texte
+// QTextBlockFormat	: le reste du bloc
 static QTextBlockFormat	defaultBlockFormat;
+static QTextCharFormat	defaultCharFormat;
 static QBrush			defaultBackground;
 
 
@@ -750,6 +753,7 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 {
 	setCenterOnScroll (true);
 	QTextCursor	cursor	= textCursor ( );
+	defaultCharFormat	= cursor.charFormat ( );
 	defaultBlockFormat	= cursor.blockFormat ( );
 	defaultBackground	= defaultBlockFormat.background ( );
 	
@@ -780,8 +784,7 @@ QtPythonConsole::QtPythonConsole (QWidget* parent, const string& appName)
 	// Enlève tous les points d'arrêt.
 	_clearBreakPointsAction	= new QAction (QIcon (":/images/clear_breakpoints.png"), QSTR ("Enlever tous les points d'arrêt"),this);
 	connect (_clearBreakPointsAction, SIGNAL (triggered ( )), this, SLOT (clearBreakPointsCallback( )));
-	// Affiche un sélecteur de fichier de chargement de script au point
-	// d'édition courant :
+	// Affiche un sélecteur de fichier de chargement de script au point d'édition courant :
 	_insertScriptAction	= new QAction (QIcon (":/images/load_script.png"), QSTR ("Insérer un script ..."), this);
 	connect (_insertScriptAction, SIGNAL (triggered ( )), this, SLOT (insertScriptCallback( )));
 
@@ -987,7 +990,7 @@ void QtPythonConsole::setRunningMode (QtPythonConsole::RUNNING_MODE mode)
 		case	QtPythonConsole::RM_DEBUG		:
 		try
 		{
-			_waitingForRunning	= false;	// v 1.14.0
+			_waitingForRunning	= false;
 			quitDbg ( );
 		}
 		catch (...)
@@ -1009,8 +1012,7 @@ void QtPythonConsole::insert (const string& fileName, string& warnings)
 	// On se met en début de ligne courante :
 	moveCursor (QTextCursor::StartOfBlock, QTextCursor::MoveAnchor);
 
-	Charset::CHARSET	streamCharset	= getFileCharset (fileName); // v 3.3.0
-//	streamCharset						= Charset::UNKNOWN == streamCharset ? Charset::ASCII : streamCharset;
+	Charset::CHARSET	streamCharset	= getFileCharset (fileName);
 	streamCharset						= Charset::UNKNOWN == streamCharset ? Charset::UTF_8 : streamCharset;	// v 5.1.7, éviter un rejet de conversion si caractère accentué
 
 	// UTF-16 : les sauts de ligne ne sont pas des \n => réécrire différemment la lecture du fichier.
@@ -1021,7 +1023,7 @@ void QtPythonConsole::insert (const string& fileName, string& warnings)
 	if ((false == stream.good ( )) && (false == stream.eof ( )))
 		throw Exception ("Fichier invalide.");
 	char	buffer [10001];
-	const size_t	currentExecLine	= _currentExecLine;	// v 5.1.7
+	const size_t	currentExecLine	= _currentExecLine;
 	while ((true == stream.good ( )) && (false == stream.eof ( )))
 	{
 		memset (buffer, '\0', 10001);
@@ -1240,9 +1242,9 @@ void QtPythonConsole::validateCursorPosition ( )
 				block				= document ( )->lastBlock ( );
 				cursor.movePosition (QTextCursor::EndOfBlock, QTextCursor::MoveAnchor);
 				cursor	= textCursor ( );
-				// Les 2 instructions suivantes sont nécessaires pour que les
-				// lignes ajoutées ne soient pas en mode "exécutées" :
+				// Les 2 instructions suivantes sont nécessaires pour que les lignes ajoutées ne soient pas en mode "exécutées" :
 				cursor.setBlockFormat (defaultBlockFormat);
+				setCurrentCharFormat (defaultCharFormat);
 				appendPlainText ("");
 			}
 		}	// if (_currentExecLine > document ( )->blockCount ( ))
@@ -1250,7 +1252,8 @@ void QtPythonConsole::validateCursorPosition ( )
 		{
 			block	= document ( )->findBlockByNumber (_currentExecLine - 1);
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
-			cursor.setBlockFormat (defaultBlockFormat);
+//			cursor.setCharFormat (defaultCharFormat);		// v 6.4.1
+//			cursor.setBlockFormat (defaultBlockFormat);		// v 6.4.1
 		}	// else if (_currentExecLine > document ( )->blockCount ( ))
 	}
 	catch (...)
@@ -1568,29 +1571,39 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 		{
 			if (false == isComment)
 			{
-				// Tant que les lignes précédentes sont des commentaires on les récupère pour les ajouter au fichier script.
-				QTextBlockFormat	bformat	= block.blockFormat ( );	// v6.4.1
-				bformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));	// v 6.4.1
+				// Tant que les lignes précédentes sont des commentaires on les récupère pour les ajouter au fichier script + colorisation dans la console :
 				UTF8String	comments (Charset::UTF_8);
 				size_t			bl	= true == isComment ? line - 1 : line - 2;
 				bool			stopped	= 2 > bl ? true : false;
 				while (false == stopped)
 				{
-					const QTextBlock	b	= document()->findBlockByNumber(bl);
-					const string		l	= b.text ( ).toStdString ( );
+					const QTextBlock	b			= document()->findBlockByNumber(bl);
+					const string		l			= b.text ( ).toStdString ( );
+					bool				colorize	= true;				// v 6.4.1. Coloriser la console couleur "déjà joué" ?
+
 					if ((true == l.empty ( )) || ('#' != l [0]) || (bl <= 0))
 					{
+						if (false == l.empty ( ))
+							colorize	= false;
 						stopped	= true;
 						bl	= bl < line - 1 ? bl + 1 : line - 1;
 					}
 					else
 					{
-						QTextCursor			cursor (b);					// v 6.4.1
-						cursor.select (QTextCursor::LineUnderCursor);	// v 6.4.1
-
-						cursor.setBlockFormat (bformat);				// v 6.4.1
 						bl--;
 					}	// else if ((true == l.empty ( )) || ('#' != l [0]) || (bl <= 0))
+					
+					if (true == colorize)	// v 6.4.1
+					{
+						QTextCursor			cursor (b);
+						QTextBlockFormat	commentBlockFormat	= b.blockFormat ( );
+						QTextCharFormat		commentCharFormat	= b.charFormat ( );
+						cursor.select (QTextCursor::LineUnderCursor);
+						commentBlockFormat.setBackground (QtScriptTextFormat::ranInstructionFormat.background ( ));
+						commentCharFormat.setBackground (QtScriptTextFormat::ranInstructionFormat.background ( ));
+						cursor.setBlockFormat (commentBlockFormat);
+						cursor.setCharFormat (commentCharFormat);	
+					}	// if (true == colorize)
 				}	// while (false == stopped)
 				for (size_t i = bl; i < line - 1; i++)
 				{
@@ -1605,19 +1618,24 @@ void QtPythonConsole::lineProcessedCallback (size_t line, bool ok, const string&
 				getLogDispatcher ( ).log (ScriptingLog (instruction, comments));
 			}	// if (false == isComment)
 		}	// if (line >= maxExecLine ( ))
+		QTextCharFormat		cformat	= block.charFormat ( );				// v 6.4.1
 		QTextBlockFormat	bformat	= block.blockFormat ( );
 		bformat.setProperty (QTextFormat::FullWidthSelection, true);
+		cformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));	// v 6.4.1
 		bformat.setBackground (true == ok ? QtScriptTextFormat::ranInstructionFormat.background ( ) : QtScriptTextFormat::failedInstructionFormat.background ( ));
 		QTextCursor			cursor (block);		// v 6.4.1
 		cursor.select (QTextCursor::LineUnderCursor);	// v 6.4.1 why BlockUnderCursor does not work ???
+		cursor.setCharFormat (cformat);
 		cursor.setBlockFormat (bformat);
 
 		if (true == cursor.atEnd ( ))
 		{
 			cursor.clearSelection ( );
 			QTextBlockFormat	newformat	= block.blockFormat ( );
-			bformat.setBackground (QtScriptTextFormat::emptyLineFormat.background ( ));
+			newformat.setBackground (QtScriptTextFormat::emptyLineFormat.background ( ));	// v 6.4.1
 			cursor.setBlockFormat (newformat);
+			cformat.setBackground (QtScriptTextFormat::emptyLineFormat.background ( ));		// v 6.4.1
+			cursor.setCharFormat (cformat);													// v 6.4.1
 			cursor.insertBlock (newformat, QtScriptTextFormat::emptyLineFormat);
 		}	// if (true == cursor.atEnd ( ))
 		addToHistoric (instruction);
@@ -2346,7 +2364,6 @@ size_t QtPythonConsole::followingInstruction (size_t line) const
 void QtPythonConsole::addInstruction (const string& instruction)
 {
 	// Un instruction en cours est peut être à compléter :
-	const size_t	pendingLinesCount	= Instruction (_pendingString).lineCount ( );	// v 6.4.1
 	_pendingString	+= instruction;
 	
 	// Commentaire, ligne blanche, ... : on ajoute et on passe à la suite.
@@ -2396,7 +2413,7 @@ void QtPythonConsole::addInstruction (const string& instruction)
 
 void QtPythonConsole::execInstructions ( )
 {
-//	EndOfDocCursor	endOfDocCursor (*this);	241
+//	EndOfDocCursor	endOfDocCursor (*this);	v 6.4.1
 
 	setRunningMode (QtPythonConsole::RM_CONTINUOUS);
 	_running	= true;
