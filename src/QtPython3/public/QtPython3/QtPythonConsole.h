@@ -39,40 +39,27 @@ typedef struct _object PyObject;
  * <UL>
  * <LI>ou saisi manuellement, façon éditeur de texte, 
  * <LI>ou importé depuis un fichier,
- * <LI>ou issu de l'historique des commandes jouées, et éventuellement modifé
- * (utilisation via MAJ + touche haut ou bas)
+ * <LI>ou issu de l'historique des commandes jouées, et éventuellement modifié (utilisation via MAJ + touche haut ou bas)
  * </UL>
  * </P>
  *
  * <P>
- * L'exécution du code est effectuée séquentiellement (pas de retour en arrière
- * dans le code), au fur et à mesure ou en mode <I>debug</I>, où les
- * instructions sont alors exécutées à la demande, en mode <I>continu</I> ou 
- * <I>pas à pas</I>, avec possibilité de positionner des <I>points d'arrêt</I>.
+ * L'exécution du code est effectuée séquentiellement (pas de retour en arrière dans le code), au fur et à mesure ou en mode <I>debug</I>, où les
+ * instructions sont alors exécutées à la demande, en mode <I>continu</I> ou <I>pas à pas</I>, avec possibilité de positionner des <I>points d'arrêt</I>.
  * </P>
  *
- * <P>Cette classe est en mesure d'afficher les sorties standard et erreur des
- * commandes exécutées via une instance de la classe <I>LogOutputStream</I>.
- * Elle peut également insérer des commandes scriptables dans la console
- * transmises via la méthode <I>log</I>.
+ * <P>Cette classe est en mesure d'afficher les sorties standard et erreur des commandes exécutées via une instance de la classe <I>LogOutputStream</I>.
+ * Elle peut également insérer des commandes scriptables dans la console transmises via la méthode <I>log</I>.
  * </P>
  *
- * <P>Cette classe propose une complétion d'instruction reposant sur
- * <I>readline</I>. Cependant cette complétion est limitée (arguments non
- * renseignés) lorsqu'il s'agit d'un <I>binding Swig</I> car il repose sur une
- * transmission d'arguments de type <I>varargs</I>. Cette classe propose
- * néanmoins de faire un effort de recherche de signature, activable via
- * <I>enableSwigCompletion</I>. La complétion est appelable via la
- * combinaison de touches <I>CTRL + Tab</I>. Elle requiert d'être un peu
- * aidée (début de nom de fonction déjà saisi).<BR>
- * Depuis la version 2.6.0 de cette bibliothèque, la complétion ne prend pas
- * en compte les méthodes dont la signature comporte
- * <I>UnusedStructForSwigCompletion</I>. Ce dispositif permet de renseigner de
- * manière exacte la signature d'une méthode n'ayant qu'une seule signature. En
- * effet, dans un tel cas, il n'est pas possible avec SWIG d'obtenir de type
- * des arguments, alors qu'on y arrive si plusieurs choix sont possibles. Une
- * idée est alors par exemple de créer une macro créant une fonction de
- * signature bidon pour les cas où seule une signature est possible. Ex :<BR>
+ * <P>Cette classe propose une complétion d'instruction reposant sur <I>readline</I>. Cependant cette complétion est limitée (arguments non
+ * renseignés) lorsqu'il s'agit d'un <I>binding Swig</I> car il repose sur une transmission d'arguments de type <I>varargs</I>. Cette classe propose
+ * néanmoins de faire un effort de recherche de signature, activable via <I>enableSwigCompletion</I>. La complétion est appelable via la
+ * combinaison de touches <I>CTRL + Tab</I>. Elle requiert d'être un peu aidée (début de nom de fonction déjà saisi).<BR>
+ * Depuis la version 2.6.0 de cette bibliothèque, la complétion ne prend pas en compte les méthodes dont la signature comporte
+ * <I>UnusedStructForSwigCompletion</I>. Ce dispositif permet de renseigner de manière exacte la signature d'une méthode n'ayant qu'une seule signature. En
+ * effet, dans un tel cas, il n'est pas possible avec SWIG d'obtenir de type des arguments, alors qu'on y arrive si plusieurs choix sont possibles. Une
+ * idée est alors par exemple de créer une macro créant une fonction de signature bidon pour les cas où seule une signature est possible. Ex :<BR>
  * <PRE>
  * struct UnusedStructForSwigCompletion { };
  * #define SET_SWIG_COMPLETABLE_METHOD(method) \
@@ -83,13 +70,11 @@ typedef struct _object PyObject;
  * </PRE>
  * </P>
  *
- * <P>La classe <I>QtDecoratedPythonConsole</I> offre cet éditeur accolé à sa
- * barre d'icône. L'opérateur <I>-></I> permet d'invoquer directement les
+ * <P>La classe <I>QtDecoratedPythonConsole</I> offre cet éditeur accolé à sa barre d'icône. L'opérateur <I>-></I> permet d'invoquer directement les
  * méthodes de l'instance de la classe <I>QtPythonConsole</I> de l'ensemble.
  * </P>
  *
- * @warning	<B>Ne pas utiliser la méthode setEnabled, mais lui préférer la
- * 			méthode <I>setUsabled</I> qui est <I>thread safe</I>.</B>
+ * @warning	<B>Ne pas utiliser la méthode setEnabled, mais lui préférer la méthode <I>setUsabled</I> qui est <I>thread safe</I>.</B>
  */
 class QtPythonConsole : public QtTextEditor
 {
@@ -98,32 +83,27 @@ class QtPythonConsole : public QtTextEditor
 	public :
 
 	/**
-	 * Le mode de fonctionnement de la console : <I>Continu</I>, valeur par
-	 * défaut, ou <I>debug</I>.
+	 * Le mode de fonctionnement de la console : <I>Continu</I>, valeur par défaut, ou <I>debug</I>.
 	 */
 	enum RUNNING_MODE { RM_CONTINUOUS, RM_DEBUG };
 
 	/**
-	 * La console doit elle supporter les scripts avec le jeu de caractères
-	 * iso-8859-15 (<I>false</I> par défaut) ?
+	 * La console doit elle supporter les scripts avec le jeu de caractères iso-8859-15 (<I>false</I> par défaut) ?
 	 */
 	static bool				enableCodingIso8859_15;
 
 	/**
-	 * La console doit elle faire des efforts de completions en cas d'appels via
-	 * un binding <I>Swig</I> (<I>false</I> par défaut) ? 
+	 * La console doit elle faire des efforts de completions en cas d'appels via un binding <I>Swig</I> (<I>false</I> par défaut) ? 
 	 */
 	static bool				enableSwigCompletion;
 
 	/**
-	 * La console doit elle s'arrêter lorsque en mode debug une erreur est
-	 * rencontrée ?
+	 * La console doit elle s'arrêter lorsque en mode debug une erreur est rencontrée ?
 	 */
 	static bool				stopOnError;
 
 	/**
-	 * @return		Retourne - si possible - le jeu de caractères d'encodage
-	 * 				du fichier dont le chemin d'accès est transmis en argument.
+	 * @return		Retourne - si possible - le jeu de caractères d'encodage du fichier dont le chemin d'accès est transmis en argument.
 	 */
 	static TkUtil::Charset::CHARSET getFileCharset (const std::string& path);
 
@@ -140,14 +120,12 @@ class QtPythonConsole : public QtTextEditor
 	virtual ~QtPythonConsole ( );
 
 	/**
-	 * @return		La largeur souhaitée pour l'affichage des numéros de ligne
-	 * 				et breakpoints.
+	 * @return		La largeur souhaitée pour l'affichage des numéros de ligne et breakpoints.
 	 */
 	virtual int lineNumberAreaWidth ( ) const;
 
 	/**
-	 * Dessine les numéros de ligne et icônes dans le rectangle transmis en
-	 * argument.
+	 * Dessine les numéros de ligne et icônes dans le rectangle transmis en argument.
 	 */
 	virtual void drawLinesNumbers (const QRect& rect);
 
@@ -177,14 +155,12 @@ class QtPythonConsole : public QtTextEditor
 	virtual void insert (const std::string& fileName, std::string& warnings);
 
 	/**
-	 * Ajoute un point d'arrêt à la ligne dont le numéro est transmis en
-	 * argument (premier numéro : 1).
+	 * Ajoute un point d'arrêt à la ligne dont le numéro est transmis en argument (premier numéro : 1).
 	 */
 	virtual void addBreakpoint (size_t line);
 
 	/**
-	 * Enlève le point d'arrêt à la ligne dont le numéro est transmis en
-	 * argument (premier numéro : 1).
+	 * Enlève le point d'arrêt à la ligne dont le numéro est transmis en argument (premier numéro : 1).
 	 */
 	virtual void removeBreakpoint (size_t line);
 
@@ -194,8 +170,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual void clearBreakpoints ( );
 
 	/**
-	 * Exécute le script à partir de la ligne d'exécution courante. Prend en
-	 * compte le mode d'exécution (continu/debug).
+	 * Exécute le script à partir de la ligne d'exécution courante. Prend en compte le mode d'exécution (continu/debug).
 	 * @see		isRunning;
 	 * @see		stop
 	 */
@@ -211,8 +186,7 @@ class QtPythonConsole : public QtTextEditor
 
 	/**
 	 * @return	<I>true</I> si l'instance est en train d'exécuter des instructions (même si en mode pas à pas, ou exécution d'un
-	 * 			fichier via <I>execFile</I>), <I>false</I> dans le cas contraire. En cas d'exécution d'un fichier
-	 *			<I>isExecutingFile</I> retournera également <I>true</I>.
+	 * 			fichier via <I>execFile</I>), <I>false</I> dans le cas contraire. En cas d'exécution d'un fichier <I>isExecutingFile</I> retournera également <I>true</I>.
 	 * @see		isHalted
 	 * @see		run
 	 * @see		execFile
@@ -228,8 +202,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual bool isExecutingFile ( ) const;
 
 	/**
-	 * @return	<I>true</I> si l'instance est actuellement arrêtée et dans
-	 * 			l'attente d'un ordre de reprise (suivant, continuer).
+	 * @return	<I>true</I> si l'instance est actuellement arrêtée et dans l'attente d'un ordre de reprise (suivant, continuer).
 	 * @see		isRunning
 	 */
 	virtual bool isHalted ( ) const;
@@ -304,22 +277,17 @@ class QtPythonConsole : public QtTextEditor
 		bool runnable ( ) const;
 
 		/**
-		 * @return	<I>true</I> si l'instruction appartient à un bloc (boucle
-		 *			<I>for</I>, <I>while</I>, ..., <I>if</I>, ..., <I>try</I>,
-		 *			..., sinon <I>false</I>.
+		 * @return	<I>true</I> si l'instruction appartient à un bloc (boucle <I>for</I>, <I>while</I>, ..., <I>if</I>, ..., <I>try</I>, ..., sinon <I>false</I>.
 		 */
 		bool partOfBlock ( ) const;
 
 		/**
-		 * @return	<I>true</I> si l'instruction transmise en argument est
-		 * 			de nature multilignes (début d'instruction for, if, while,
-		 * 			try), <I>false</I> dans le cas contraire.
+		 * @return	<I>true</I> si l'instruction transmise en argument est de nature multilignes (début d'instruction for, if, while, try), <I>false</I> dans le cas contraire.
 		 */
 		static bool isMultiline (const std::string& instruction);
 
 		/**
-		 * @return	<I>true</I> si l'instruction transmise en argument est
-		 * 			exécutable, <I>false</I> dans le cas contraire.
+		 * @return	<I>true</I> si l'instruction transmise en argument est exécutable, <I>false</I> dans le cas contraire.
 		 */
 		static bool isRunnable (const std::string& instruction);
 
@@ -345,10 +313,7 @@ class QtPythonConsole : public QtTextEditor
 		{ return _type; }
 
 		// Marche moyennement avec le syntax highlighting !
-		static const QtScriptTextFormat	commentFormat, emptyLineFormat,
-										instructionFormat,
-										ranInstructionFormat,
-										failedInstructionFormat, tryFormat;
+		static const QtScriptTextFormat	commentFormat, emptyLineFormat, instructionFormat, ranInstructionFormat, failedInstructionFormat, tryFormat;
 
 		static const QtScriptTextFormat& textFormat (const Instruction& ins);
 
@@ -389,8 +354,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual QAction& removeBreakPointAction ( );
 
 	/**
-	 * @return		L'action "enlever tous les points d'arrêt" associée à
-	 * l			instance.
+	 * @return		L'action "enlever tous les points d'arrêt" associée à instance.
 	 */
 	virtual QAction& removeAllBreakPointsAction ( );
 
@@ -422,7 +386,7 @@ class QtPythonConsole : public QtTextEditor
 	 * Fonction callback appelée lorsqu'une ligne de la console vient d'être exécutée. Actualise la console.
 	 * @param		numéro de ligne venant d'être exécutée
 	 * @param		<I>true</I> si la ligne s'est correctement exécutée, <I>false</I> en cas d'erreur.
-	 * * @param		Message décrivant l'éventuelle erreur rencontrée
+	 * @param		Message décrivant l'éventuelle erreur rencontrée
 	 */
 	virtual void lineProcessedCallback (size_t consoleLine, bool ok, const std::string& error);
 
@@ -432,81 +396,65 @@ class QtPythonConsole : public QtTextEditor
 	//@{
 
 	/**
-	 * @return	L'éventuel flux sortant de messages utilisé pour écrire les
-	 *			instructions exécutées dans des scripts.
+	 * @return	L'éventuel flux sortant de messages utilisé pour écrire les instructions exécutées dans des scripts.
 	 */
 	virtual TkUtil::LogDispatcher& getLogDispatcher ( );
 
 	/**
-	 * @return	L'éventuel flux sortant de messages utilisé pour afficher
-	 * 			des messages sur le déroulement des commandes exécutées.
+	 * @return	L'éventuel flux sortant de messages utilisé pour afficher des messages sur le déroulement des commandes exécutées.
 	 * @see		setLogStream
 	 * @see		log
-	 * @warning	Ce flux n'est pas adopté, et sa destruction reste de ce fait à
-	 * 			la charge de l'appelant.
+	 * @warning	Ce flux n'est pas adopté, et sa destruction reste de ce fait à la charge de l'appelant.
 	 */
 	virtual TkUtil::LogOutputStream* getLogStream ( );
 
 	/**
-	 * @param	Le flux sortant de messages à utiliser pour afficher des
-	 * 			messages sur le déroulement des commandes exécutées.
+	 * @param	Le flux sortant de messages à utiliser pour afficher des messages sur le déroulement des commandes exécutées.
 	 * @see		getLogStream
 	 * @see		log
 	 */
 	virtual void setLogStream (TkUtil::LogOutputStream* stream);
 
 	/**
-	 * Affiche le message transmis en arguments dans le flux sortant de messages
-	 * associé à l'instance.
+	 * Affiche le message transmis en arguments dans le flux sortant de messages associé à l'instance.
 	 * @see		getLogStream
 	 */
 	virtual void log (const TkUtil::Log& log);
 
 	/**
-	 * @param	Les résultats contenant la chaine transmise en argument doivent
-	 * 			être masqués.
+	 * @param	Les résultats contenant la chaine transmise en argument doivent être masqués.
 	 */
 	virtual void hideResult (const std::string& str);
 
 	/**
-	 * Ajoute la commande transmise en argument, si il (le panneau) n'en est pas
-	 * à l'origine, à l'historique des commandes exécutées, mais ne l'exécute
-	 * pas. Présente l'intérêt d'intercaller des commandes effectuées par
-	 * ailleurs.
+	 * Ajoute la commande transmise en argument, si il (le panneau) n'en est pas à l'origine, à l'historique des commandes exécutées, mais ne l'exécute
+	 * pas. Présente l'intérêt d'intercaller des commandes effectuées par ailleurs.
 	 * @param		Commande à ajouter
 	 * @param		Commentaires associés à la commande.
 	 * @param		Sortie de la commande à ajouter.
 	 * @param       Status en erreur ou non de la commande
-	 * @param		<I>true</I> si la commande vient du noyau, <I>false</I>
-	 * 				si elle vient d'ailleurs (par exemple de la console python).
+	 * @param		<I>true</I> si la commande vient du noyau, <I>false</I> si elle vient d'ailleurs (par exemple de la console python).
 	 * @see			setPythonOutputStream
 	 */
-	virtual void addToHistoric (
-		const IN_UTIL UTF8String& command, const IN_UTIL UTF8String& comments,
-		const IN_UTIL UTF8String& commandOutput, bool statusErr,
-		bool fromKernel = false);
+	virtual void addToHistoric (const IN_UTIL UTF8String& command, const IN_UTIL UTF8String& comments, const IN_UTIL UTF8String& commandOutput, bool statusErr, bool fromKernel = false);
 
 	/**
-	 * @return		Nom de l'interpréteur python (ex : nom de l'application),
-	 *				pour les messages d'erreur.
+	 * @return		Nom de l'interpréteur python (ex : nom de l'application), pour les messages d'erreur.
 	 * @see			setInterpreterName
 	 */
 	virtual const IN_STD string& getInterpreterName ( ) const;
 
 	/**
-	 * @param		Nom de l'interpréteur python (ex : nom de l'application),
-	 *				pour les messages d'erreur.
+	 * @param		Nom de l'interpréteur python (ex : nom de l'application), pour les messages d'erreur.
 	 * @see			getInterpreterName
 	 */
 	virtual void setInterpreterName (const IN_STD string& name);
 
 
 	/**
-	 * <P>Flux standards (<I>stdout</I> et <I>stderr</I>) récupérés
-	 * (<I>true</I>) ou non (<I>false</I>) par la session <I>python</I> lors de
+	 * <P>Flux standards (<I>stdout</I> et <I>stderr</I>) récupérés (<I>true</I>) ou non (<I>false</I>) par la session <I>python</I> lors de
 	 * l'exécution de commandes ou fichiers scripts.<P>
-	 * <P>L'intérêt de le faire est que les sorties figurent dans les
-	 * <I>logs</I>. L'intérêt de ne pas le faire est en cas de plantage où ces
+	 * <P>L'intérêt de le faire est que les sorties figurent dans les <I>logs</I>. L'intérêt de ne pas le faire est en cas de plantage où ces
 	 * traces, éventuellement utiles à la mise au point, sont perdues.
 	 * </P>
 	 */
@@ -552,8 +500,7 @@ class QtPythonConsole : public QtTextEditor
 	protected :
 
 	/**
-	 * <P>Classe représentant une séquence d'instructions Python issue de la console et mises dans un fichier temporaire qui sera exécuté, en mode
-	 * debug ou non.
+	 * <P>Classe représentant une séquence d'instructions Python issue de la console et mises dans un fichier temporaire qui sera exécuté, en mode debug ou non.
 	 * </P>
 	 * <P>Par convention les numéros de ligne commencent à 1.
 	 * </P>
@@ -676,7 +623,7 @@ class QtPythonConsole : public QtTextEditor
 		/** Le fichier temporaire utilisé. */
 		std::unique_ptr<TkUtil::TemporaryFile>		_tmpFile;
 
-		/** Le flux utilisé pour écrire dans le fichier temporire. */
+		/** Le flux utilisé pour écrire dans le fichier temporaire. */
 		std::unique_ptr<std::ofstream>				_tmpStream;
 
 		/** Les lignes conservées. */
@@ -685,12 +632,10 @@ class QtPythonConsole : public QtTextEditor
 		/** Le nombre de lignes du fichier. */
 		size_t										_lineCount;
 
-		/** Le numéro de la première ligne de la console écrite dans le
-		    fichier. */
+		/** Le numéro de la première ligne de la console écrite dans le fichier. */
 		size_t										_firstLineNum;
 
-		/** <I>true</I> si le jeu de caractères du fichier est
-		 * 	<I>ISO-8859-15</I>, sinon <I>false</I>. */
+		/** <I>true</I> si le jeu de caractères du fichier est <I>ISO-8859-15</I>, sinon <I>false</I>. */
 		bool										_iso8859;
 
 		/** Le plus grand numéro de ligne traité. */
@@ -723,15 +668,12 @@ class QtPythonConsole : public QtTextEditor
 
 	/**
 	 * Appelé lorsque le curseur change de position. Actualise les actions.
-	 * L'action d'insertion d'un script dépend notamment de la position du
-	 * curseur.
+	 * L'action d'insertion d'un script dépend notamment de la position du curseur.
 	 */
 	virtual void cursorPositionCallback ( );
 
 	/**
-	 * Certains évènements sont interdits sur les zones de script déjà
-	 * exécutées. Les surcharges ci-dessous visent à metter en place cette
-	 * interdiction.
+	 * Certains évènements sont interdits sur les zones de script déjà exécutées. Les surcharges ci-dessous visent à metter en place cette interdiction.
 	 */
 	virtual bool event (QEvent*);
 	virtual void dragEnterEvent (QDragEnterEvent*);
@@ -739,16 +681,14 @@ class QtPythonConsole : public QtTextEditor
 	virtual void dragMoveEvent (QDragMoveEvent*);
 	virtual void dropEvent (QDropEvent*);
 
-	/** Gestion des évènements : surchages pour spécificité (historique des
-	 * instructions jouées, ...).
+	/** Gestion des évènements : surchages pour spécificité (historique des instructions jouées, ...).
 	 * @see	handleDownKeyPress
 	 * @see	handleUpKeyPress
 	 */
 	virtual void keyPressEvent (QKeyEvent* event);
 
 	/**
-	 * Appelé  lorsque l'utilisateur presse la touche <I>down</I>
-	 * (resp. <I>up</I>). Si les modificateurs adéquats sont également pressés 
+	 * Appelé  lorsque l'utilisateur presse la touche <I>down</I> (resp. <I>up</I>). Si les modificateurs adéquats sont également pressés 
 	 * propose alors une instruction présente dans l'historique.
 	 * @see		addToHistoric
 	 */
@@ -769,8 +709,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual void updateActions ( );
 
 	/**
-	 * @return	La ligne courrante, à savoir la prochaine ligne à devoir être
-	 * 			exécutée.
+	 * @return	La ligne courrante, à savoir la prochaine ligne à devoir être exécutée.
 	 * @see		editedInstruction
 	 * @see		previousInstruction
 	 * @see		maxExecLine
@@ -790,14 +729,9 @@ class QtPythonConsole : public QtTextEditor
 	virtual std::string editedInstruction ( ) const;
 
 	/**
-	 * @return	La ligne d'instruction exécutable suivant la ligne transmise 
-	 * 			dont le numéro est transmis en argument (saute les lignes
-	 * 			blanches, les lignes de commentaires). S'il n'y a que des lignes
-	 * 			blanches après retourne alors le numéro de la première ligne
-	 * 			blanche.
-	 * @warning	<B>ATTENTION :</B> ne garanti pas que ce sera la prochaine
-	 * 			instruction exécutée, qui peut dépendre d'un branchement
-	 * 			conditionnel, d'une exception.
+	 * @return	La ligne d'instruction exécutable suivant la ligne transmise dont le numéro est transmis en argument (saute les lignes
+	 * 			blanches, les lignes de commentaires). S'il n'y a que des lignes blanches après retourne alors le numéro de la première ligne blanche.
+	 * @warning	<B>ATTENTION :</B> ne garanti pas que ce sera la prochaine instruction exécutée, qui peut dépendre d'un branchement conditionnel, d'une exception.
 	 * @see		previousInstruction
 	 */
 	virtual size_t followingInstruction (size_t line) const;
@@ -809,10 +743,8 @@ class QtPythonConsole : public QtTextEditor
 	virtual size_t previousInstruction ( ) const;
 
 	/**
-	 * Ajoute l'instruction transmise en argument à la console, au point
-	 * courant d'édition. Vérifie que cette instruction est valable.
-	 * Gère les instructions multilignes, à savoir que le cas échéant l'instance
-	 * attend de disposer de tous le bloc multiligne avant de l'ajouter.
+	 * Ajoute l'instruction transmise en argument à la console, au point courant d'édition. Vérifie que cette instruction est valable.
+	 * Gère les instructions multilignes, à savoir que le cas échéant l'instance attend de disposer de tous le bloc multiligne avant de l'ajouter.
 	 * @warning	L'instruction est supposée être encodée en UTF8.
 	 */
 	virtual void addInstruction (const std::string& instruction);
@@ -830,8 +762,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual void execDbgInstructions (bool stopImmediatly);
 
 	/**
-	 * Exécute l'instruction transmise en argument hors débogueur, via
-	 * <I>PyRun_StringFlags</I>.
+	 * Exécute l'instruction transmise en argument hors débogueur, via <I>PyRun_StringFlags</I>.
 	 * @param	instruction à exécuter
 	 * @param	insère dans la console au point courant d'exécution
 	 * 			l'instruction si <I>insert</I> vaut <I>true</I>.
@@ -839,8 +770,7 @@ class QtPythonConsole : public QtTextEditor
 	virtual void execInstruction (const std::string& instruction, bool insert);
 
 	/**
-	 * Exécute le fichier transmis en argument hors débogueur, via
-	 * <I>PyRun_FileFlags</I>. Le fichier n'est pas inséré dans la console.
+	 * Exécute le fichier transmis en argument hors débogueur, via <I>PyRun_FileFlags</I>. Le fichier n'est pas inséré dans la console.
 	 * <I>isRunning</I> retourne <I>true</I> durant l'exécution du fichier.
 	 * @param	fichier à exécuter
 	 * @warning	<B>ATTENTION : Non compatible en l'état avec une seconde
@@ -849,22 +779,19 @@ class QtPythonConsole : public QtTextEditor
 	virtual void execFile (const std::string& file);
 
 	/**
-	 * @return	Les instructions exécutables (depuis la ligne donnée en argument
-	 * 			à la dernière ligne).
+	 * @return	Les instructions exécutables (depuis la ligne donnée en argument à la dernière ligne).
 	 */
 	virtual std::vector<std::string> getRunnableInstructions (size_t first) const;
 
 	/**
 	 * @param		<I>from</I> est la ligne (non évaluée) à partir de laquelle on recherche un breakpoint.
 	 * @param		<I>num</I> est le nombre de lignes à partir de <I>from</I>.
-	 * @return		Le numéro de ligne du prochain breakpoint après <I>from</I>, ou <I>from + num + 1</I>
-	 *				en l'absence de breakpoint suivant.
+	 * @return		Le numéro de ligne du prochain breakpoint après <I>from</I>, ou <I>from + num + 1</I> en l'absence de breakpoint suivant.
 	 */
 	virtual size_t getNextBreakPoint (size_t from, size_t num) const;
 
 	/**
-	 * Récupère les sorties python et les exploite conformément au contexte
-	 * en cours.
+	 * Récupère les sorties python et les exploite conformément au contexte en cours.
 	 */
 	virtual void processPythonOutputs ( );
 
@@ -874,40 +801,32 @@ class QtPythonConsole : public QtTextEditor
 	virtual int getIconSize ( ) const;
 
 	/**
-	 * @return	<I>true</I> si la modification du script est autorisée à
-	 * 			l'emplacement du curseur, <I>false</I> dans le cas contraire.
+	 * @return	<I>true</I> si la modification du script est autorisée à l'emplacement du curseur, <I>false</I> dans le cas contraire.
 	 */
 	virtual bool allowEditionAtCursorPos ( ) const;
 
 	/**
-	 * @return	<I>true</I> si la modification du script est autorisée à
-	 * 			la ligne dont le numéro est tranmis en argument (numéro première
-	 * 			ligne : 1).
+	 * @return	<I>true</I> si la modification du script est autorisée à la ligne dont le numéro est tranmis en argument (numéro première ligne : 1).
 	 */
 	virtual bool allowEditionAtLine (size_t line) const;
 
 	/**
-	 * Positionne le curseur à une "bonne position pour l'utilisateur". Ajoute
-	 * une nouvelle ligne si nécessaire.
+	 * Positionne le curseur à une "bonne position pour l'utilisateur". Ajoute une nouvelle ligne si nécessaire.
 	 */
 	virtual void validateCursorPosition ( );
 
 	/**
 	 * Ajoute à <I>completions</I> les complétions acceptées par <I>Swig</I>.
-	 * Cette fonction part du principe que l'instruction <I>instruction</I> est
-	 * un appel <I>Swig</I>, et les signatures des complétions qui seront
-	 * proposées (et ajoutées à <I>completions</I>) sont extraites des messages
-	 * d'erreur fournis par <I>Swig</I> ...
-	 * @param	ensemble de complétions auxquelles seront ajoutées celle de cet
-	 * 			appel.
+	 * Cette fonction part du principe que l'instruction <I>instruction</I> est un appel <I>Swig</I>, et les signatures des complétions qui seront
+	 * proposées (et ajoutées à <I>completions</I>) sont extraites des messages d'erreur fournis par <I>Swig</I> ...
+	 * @param	ensemble de complétions auxquelles seront ajoutées celle de cet appel.
 	 * @param	instruction dont on recherche les complétion <I>Swig</I>.
 	 * @see		getSwigCompletion
 	 */
 	virtual void addSwigCompletions (std::vector<std::string>& completions, const std::string& instruction);
 
 	/**
-	 * Trouve la seule complétion acceptable par <I>Swig</I> possible pour
-	 * l'instruction transmise en argument, et la retourne. Cette instruction
+	 * Trouve la seule complétion acceptable par <I>Swig</I> possible pour l'instruction transmise en argument, et la retourne. Cette instruction
 	 * est de type nom de fonction, sans parenthèes, sans arguments.
 	 * La complétion retournée est reconstituée à partir des messages d'erreur fournis par <I>Swig</I> ...
 	 * @return	Complétion acceptable pour <I>Swig</I>
@@ -969,16 +888,14 @@ class QtPythonConsole : public QtTextEditor
 	virtual void removeBreakPointCallback ( );
 
 	/**
-	 * Appelé lorsque l'utilisateur active l'action "enlever tous les points
-	 * d'arrêt".
+	 * Appelé lorsque l'utilisateur active l'action "enlever tous les points d'arrêt".
 	 * Enlève tous les points d'arrêt.
 	 */
 	virtual void clearBreakPointsCallback ( );
 
 	/**
 	 * Appelé lorsque l'utilisateur active l'action "charger un script".
-	 * Affiche un sélecteur de fichier de chargement d'un script et insère le
-	 * contenu du script sélectionné à l'emplacement du curseur.
+	 * Affiche un sélecteur de fichier de chargement d'un script et insère le contenu du script sélectionné à l'emplacement du curseur.
 	 * @warning		L'insertion se fait sur une nouvelle ligne
 	 */
 	virtual void insertScriptCallback ( );
@@ -992,8 +909,7 @@ class QtPythonConsole : public QtTextEditor
 	signals :
 
 	/**
-	 * Signal émis en environnement multithread lorsque la méthode
-	 * <I>setUsabled/I> est invoquée depuis un thread autre que le thread de l'instance.
+	 * Signal émis en environnement multithread lorsque la méthode <I>setUsabled/I> est invoquée depuis un thread autre que le thread de l'instance.
 	 * @warning		Requiert une compilation avec la directive <I>-DMULTITHREADED_APPLICATION</I>.
 	 */
 	void setUsabledCalled (bool usable);
@@ -1092,10 +1008,8 @@ class QtPythonConsole : public QtTextEditor
 
 /**
  * <P>
- * Classe de widget comprenant une instance de la classe <I>QtPythonConsole</I>
- * accolée à sa barre d'icônes. L'<I>opérateur -></I> permet d'invoquer
- * directement les méthodes de l'instance associée de la classe
- * <I>QtPythonConsole</I>.
+ * Classe de widget comprenant une instance de la classe <I>QtPythonConsole</I> accolée à sa barre d'icônes. L'<I>opérateur -></I> permet d'invoquer
+ * directement les méthodes de l'instance associée de la classe <I>QtPythonConsole</I>.
  * </P>
  */
 class QtDecoratedPythonConsole : public QMainWindow
@@ -1131,8 +1045,7 @@ class QtDecoratedPythonConsole : public QMainWindow
 	virtual QtPythonConsole& getPythonConsole ( );
 
 	/**
-	 * Invoquer directement des méthodes de l'instance de la console python
-	 * associée.
+	 * Invoquer directement des méthodes de l'instance de la console python associée.
 	 */
 	virtual const QtPythonConsole* operator -> ( ) const;
 	virtual QtPythonConsole* operator -> ( );
