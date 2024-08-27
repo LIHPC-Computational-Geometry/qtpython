@@ -655,8 +655,8 @@ static int tracePythonExecution (PyObject*, PyFrameObject* frame, int what, PyOb
 		else if (PyTrace_EXCEPTION == what)	// Ligne en erreur
 		{
 			PyObject*		pystring = PyObject_Str (obj);
-			Py_DecRef (pystring);
 			const string	error= PyUnicode_AsUTF8 (pystring);
+            Py_DecRef (pystring);
 			QtPythonConsole &console = getConsole (*frame);
 			console.lineProcessedCallback (PyUnicode_AsUTF8 (frame->f_code->co_filename), PyFrame_GetLineNumber (frame), false, error);
 		}	// if (PyTrace_EXCEPTION == what)
