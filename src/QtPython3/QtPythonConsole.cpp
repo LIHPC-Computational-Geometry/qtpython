@@ -622,7 +622,7 @@ static void unregisterConsole (QtPythonConsole& console)
 
 static QtPythonConsole& getConsole (PyFrameObject& frame)
 {
-	const string	fileName	= PyUnicode_AsUTF8 (frame.f_code->co_filename);
+	const string	fileName	= PyUnicode_AsUTF8 (PyFrame_GetCode(&frame)->co_filename);
 
 	// Cas particulier : on n'exécute pas un fichier mais une chaîne de caractères => fileName vaut <string>
 	// ce qui est peu discriminant. On l'accepte si seule une console est enregistrée.
@@ -650,15 +650,15 @@ static int tracePythonExecution (PyObject*, PyFrameObject* frame, int what, PyOb
 		if (PyTrace_LINE == what)	// Evènement "numéro de ligne" modifié (succès et erreur)
 		{
 			QtPythonConsole &console = getConsole (*frame);
-			console.lineProcessedCallback (PyUnicode_AsUTF8 (frame->f_code->co_filename), PyFrame_GetLineNumber (frame), true, string ( ));
+			console.lineProcessedCallback (PyUnicode_AsUTF8 (PyFrame_GetCode(frame)->co_filename), PyFrame_GetLineNumber (frame), true, string ( ));
 		}	// if (PyTrace_RETURN == what)
 		else if (PyTrace_EXCEPTION == what)	// Ligne en erreur
 		{
 			PyObject*		pystring = PyObject_Str (obj);
-			Py_DecRef (pystring);
 			const string	error= PyUnicode_AsUTF8 (pystring);
+            Py_DecRef (pystring);
 			QtPythonConsole &console = getConsole (*frame);
-			console.lineProcessedCallback (PyUnicode_AsUTF8 (frame->f_code->co_filename), PyFrame_GetLineNumber (frame), false, error);
+			console.lineProcessedCallback (PyUnicode_AsUTF8 (PyFrame_GetCode(frame)->co_filename), PyFrame_GetLineNumber (frame), false, error);
 		}	// if (PyTrace_EXCEPTION == what)
 		else if (PyTrace_RETURN == what)	// Fin du bloc de code avec
 		{
