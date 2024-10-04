@@ -1,3 +1,10 @@
+Version 6.4.3 : 04/10/24
+===============
+
+Correctif de l'emplacement du point d'insertion (de la prochaine instruction) lors de l'ajout dans la console d'une instruction avec commentaire
+multi-lignes dans QtPythonConsole::addToHistoric. Dans un tel cas le commentaire était coupé en 2 par l'instruction suivante.
+
+
 Version 6.4.2 : 28/08/24
 ===============
 

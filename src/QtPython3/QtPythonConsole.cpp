@@ -1754,10 +1754,12 @@ void QtPythonConsole::addToHistoric (
 			line	+= lineNumber (comment.utf8 ( ));
 			cursor.insertText (UTF8TOQSTRING (comment));
 			cursor.insertText ("\n");
-			block	= block.next ( );
+			// v 6.4.3. Rem CP : chaque ligne (=> "\n") ajoutée équivaut à un cursor.addBlock (ligne), d'où la boucle for ci-dessous.
+			for (int b = 0; b < commentLineNum; b++)	// v 6.4.3
+				block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
-			line	-= commentLineNum;	// v 6.3.2
+			line--;	// v 6.4.3
 		}	// if (false == scriptingLog.getComment ( ).empty ( ))
 		else
 			line--;		// v 6.3.2
@@ -1778,7 +1780,10 @@ void QtPythonConsole::addToHistoric (
 			cursor.insertText (UTF8TOQSTRING (err));
 			cursor.insertText ("\n");
 			log (ErrorLog (UTF8String (error, Charset::UTF_8)));
-			block	= block.next ( );
+			// v 6.4.3. Rem CP : chaque ligne (=> "\n") ajoutée équivaut à un cursor.addBlock (ligne), d'où la boucle for ci-dessous.
+			const int errorLineNum	= lineNumber (err);
+			for (int b = 0; b < errorLineNum; b++)	// v 6.4.3
+				block	= block.next ( );
 			cursor.setPosition (block.position ( ), QTextCursor::MoveAnchor);
 			setTextCursor (cursor);
 		}	// if (true == statusErr)
