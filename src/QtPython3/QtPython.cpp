@@ -190,9 +190,23 @@ QtPython::~QtPython ( )
 
 void QtPython::preInitialize ( )	// CP v 5.1.0
 {
-	// A faire avant Py_Initialize :
-	if (-1 == PyImport_AppendInittab ("redirector", PyInit_redirector))
-		throw Exception ("Echec de l'importation du module redirector par la console Python.");
+	static bool	preInitialized	= false;	// v 6.4.4
+	
+	if (false == preInitialized)
+	{
+		// A faire avant Py_Initialize :
+		if (false == Py_IsInitialized ( ))
+		{
+			if (-1 == PyImport_AppendInittab ("redirector", PyInit_redirector))
+				throw Exception ("Echec de l'importation du module redirector par la console Python.");
+		}
+		else
+			// v 6.4.4. Eviter (python 3.12.5) : Fatal Python error: PyImport_AppendInittab: PyImport_AppendInittab() may not be called after Py_Initialize()
+			// Python runtime state: initialized
+			throw Exception ("QtPython::preInitialize doit être appelé avant Py_Initialize. PyImport_AppendInittab non appelé car l'application planterait. La console python ne devrait pas fonctionner correctement.");
+
+		preInitialized	= true;
+	}	// if (false == preInitialized)
 }	// QtPython::preInitialize
 
 
