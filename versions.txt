@@ -1,3 +1,9 @@
+Version 6.4.4 : 20/11/24
+===============
+
+QtPython::preInitialize lève une exception si appelée pour la première fois après Py_Initialize en vue d'éviter un fatal error de python 3.
+
+
 Version 6.4.3 : 04/10/24
 ===============
 
