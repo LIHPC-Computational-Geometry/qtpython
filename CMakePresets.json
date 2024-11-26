@@ -4,7 +4,6 @@
       {
         "name": "ci",
         "cacheVariables": {
-          "USE_PYTHON_3": "ON",
           "GUIToolkitsVariables_ROOT": "$env{INSTALL_DIR}/guitoolkitsvariables",
           "TkUtil_ROOT": "$env{INSTALL_DIR}/tkutil",
           "QtUtil_ROOT": "$env{INSTALL_DIR}/qtutil",
