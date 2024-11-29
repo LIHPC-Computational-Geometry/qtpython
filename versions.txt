@@ -1,20 +1,27 @@
+Version 6.4.6 : 29/11/24
+===============
+
+Correctif de bogue : si la derni√®re instruction √† ex√©cuter et ex√©cut√©e est dans une boucle on pointe au d√©but la boucle (juste apr√®s le test sur la condition)
+=> toute ex√©cution ult√©rieure d√©butera par cette ligne - ce qui est faux - qui est de surcroit indent√©e => erreur d'indentation python.
+
+
 Version 6.4.5 : 26/11/24
 ===============
 
-Python 3 utilisÈ par dÈfaut, sans demande explicite.
+Python 3 utilis√© par d√©faut, sans demande explicite.
 
 
 Version 6.4.4 : 20/11/24
 ===============
 
-QtPython::preInitialize lËve une exception si appelÈe pour la premiËre fois aprËs Py_Initialize en vue d'Èviter un fatal error de python 3.
+QtPython::preInitialize l√®ve une exception si appel√©e pour la premi√®re fois apr√®s Py_Initialize en vue d'√©viter un fatal error de python 3.
 
 
 Version 6.4.3 : 04/10/24
 ===============
 
 Correctif de l'emplacement du point d'insertion (de la prochaine instruction) lors de l'ajout dans la console d'une instruction avec commentaire
-multi-lignes dans QtPythonConsole::addToHistoric. Dans un tel cas le commentaire Ètait coupÈ en 2 par l'instruction suivante.
+multi-lignes dans QtPythonConsole::addToHistoric. Dans un tel cas le commentaire √©tait coup√© en 2 par l'instruction suivante.
 
 
 Version 6.4.2 : 28/08/24
@@ -33,7 +40,7 @@ Divers correctifs console python 3 (environnement Qt 5).
 Version 6.4.0 : 13/12/23
 ===============
 
-Portage Qt 6/GUIToolkitsVariables v 1.4.0/QtUtil v 6.4.0 de la console python 3. La console python 2 est considÈrÈe obsolËte.
+Portage Qt 6/GUIToolkitsVariables v 1.4.0/QtUtil v 6.4.0 de la console python 3. La console python 2 est consid√©r√©e obsol√®te.
 
 cmake_minimum_required (VERSION 3.15)	# CMP0094
 
@@ -42,16 +49,16 @@ Version 6.3.3 : 27/10/23
 ===============
 
 Correctifs console python 2 : 
-- gestion de l'historique avec les touches flËche haut/bas.
-- gestion couleur des affichages (parfois en bleu ‡ la place du noir).
+- gestion de l'historique avec les touches fl√®che haut/bas.
+- gestion couleur des affichages (parfois en bleu √† la place du noir).
 
 
 Version 6.3.2 : 24/10/23
 ===============
 
 Correctifs console python 3 : 
-- gestion de l'historique avec les touches flËche haut/bas.
-- gestion couleur des affichages (parfois en bleu ‡ la place du noir).
+- gestion de l'historique avec les touches fl√®che haut/bas.
+- gestion couleur des affichages (parfois en bleu √† la place du noir).
 
 
 Version 6.3.0 : 21/06/23
@@ -59,21 +66,21 @@ Version 6.3.0 : 21/06/23
 
 Sortie du projet GUIToolkits.
 
-GUIToolkitsVariables v 1.3.0 : python_binding.cmake v 0.5.0 (rÈpertoire d'installation des modules dÈterminÈ par python).
+GUIToolkitsVariables v 1.3.0 : python_binding.cmake v 0.5.0 (r√©pertoire d'installation des modules d√©termin√© par python).
 
 
 Version 6.2.0 : 06/06/23
 ===============
 
-Correctif scrolling console en mode debug : la console dÈfilait jusqu'‡ la fin, mÍme en mode pas ‡ pas ou lorsque l'exÈcution
-s'arrÍtait sur un breakpoint.
+Correctif scrolling console en mode debug : la console d√©filait jusqu'√† la fin, m√™me en mode pas √† pas ou lorsque l'ex√©cution
+s'arr√™tait sur un breakpoint.
 
 
 Version 6.1.1 : 03/05/23
 ===============
 
-Correctif consoles python 2 et python 3 : numÈro de ligne courante en sortie de QtPythonConsole::addToHistoric. Avait tendance
-‡ restreindre l'accËs ‡ la fonctionnalitÈ de chargement d'un script.
+Correctif consoles python 2 et python 3 : num√©ro de ligne courante en sortie de QtPythonConsole::addToHistoric. Avait tendance
+√† restreindre l'acc√®s √† la fonctionnalit√© de chargement d'un script.
 
 
 Version 6.1.0 : 31/03/23
@@ -85,49 +92,49 @@ Portage GitHub environnement podman/spack/tests CI.
 Version 6.0.1 : 03/02/23
 ===============
 
-Retouches cmake : blindage pour cas non gÈrÈs (versions Python).
+Retouches cmake : blindage pour cas non g√©r√©s (versions Python).
 
 
 Version 6.0.0 : 10/01/23
 ===============
 
-IntÈgration au projet GUIToolkits.
+Int√©gration au projet GUIToolkits.
 
 
 Version 5.3.0 : 07/12/22
 ===============
 
-Retouches mÈcanismes de complÈtion en Python 2 et 3. Les consoles python acceptent maintenant de traiter des
+Retouches m√©canismes de compl√©tion en Python 2 et 3. Les consoles python acceptent maintenant de traiter des
 expressions type  = objet.methode
 
 
 Version 5.2.0 : 29/11/22
 ================
 
-Suppression classe QtPythonPanel et dÈpendances QConsole.
+Suppression classe QtPythonPanel et d√©pendances QConsole.
 
 
 Version 5.1.9 : 13/09/22
 ===============
 
-On autorise les Ctrl+C dans la console python et les et Ctrl+V/X en zone Èditable.
-A noter que trËs peu de mÈthodes de QPlainTextEdit sont virtuelles (copy, paste, cut, isReadOnly, ...) :( ce qui ne facilite
+On autorise les Ctrl+C dans la console python et les et Ctrl+V/X en zone √©ditable.
+A noter que tr√®s peu de m√©thodes de QPlainTextEdit sont virtuelles (copy, paste, cut, isReadOnly, ...) :( ce qui ne facilite
 pas la mise en place de retouches comportementales.
 
 
 Version 5.1.8 : 19/04/22
 ===============
 
-Option de compilation cmake BUILD_PY_CONSOLE:BOOL. En son absence (dÈfaut) ne compile pas l'exÈcutable "console python". En de rares
-circonstances la compilation Èchoue sur un fichier moc ...
+Option de compilation cmake BUILD_PY_CONSOLE:BOOL. En son absence (d√©faut) ne compile pas l'ex√©cutable "console python". En de rares
+circonstances la compilation √©choue sur un fichier moc ...
 
 
 Version 5.1.7 : 06/04/22
 ===============
 
 Correctifs QtPythonConsole::insert :
-- Eviter un rejet de conversion du fichier insÈrÈ si il contient des caractËres accentuÈs et ne contient pas d'infos sur son encodage.
-- Support des instructions multilignes (_currentExecLine Ètait incrÈmentÈ ‡ tort).
+- Eviter un rejet de conversion du fichier ins√©r√© si il contient des caract√®res accentu√©s et ne contient pas d'infos sur son encodage.
+- Support des instructions multilignes (_currentExecLine √©tait incr√©ment√© √† tort).
 
 
 Version 5.1.6 : 25/03/22
@@ -140,7 +147,7 @@ Version 5.1.5 : 25/02/22
 ===============
 
 QtPythonConsole::addInstruction : correctif pour le cas de l'insertion d'un commentaire multiligne. A noter qu'un bogue
-subsiste et qu'on peut observer un dÈcalage entre commentaires et instructions associÈes.
+subsiste et qu'on peut observer un d√©calage entre commentaires et instructions associ√©es.
 
 
 Version 5.1.4 : 22/02/22
@@ -158,7 +165,7 @@ Retouches cmake dans QConsole, QtPython et QtPython3 : find_dependency.
 Version 5.1.2 : 04/11/21
 ===============
 
-Retouches cmake pour interdire de chercher Qt dans les rÈpertoires systËmes
+Retouches cmake pour interdire de chercher Qt dans les r√©pertoires syst√®mes
 (=> find_package (Qt5Widgets 5 REQUIRED NO_DEFAULT_PATH) ...)
 
 
@@ -171,16 +178,16 @@ Divers nettoyage
 Version 5.1.0 : 06/09/21
 ===============
 
-MÈthode QtPython::preInitialize, pour l'API Python 3. Objectif : initialiser les redirections de flux
-sortants (stdout) vers la console avant que Py_Initialize ne soit appelÈ.
-Corrige le bug o˘ les sorties python (et donc bindings python) n'apparaissaient pas dans le panneau
+M√©thode QtPython::preInitialize, pour l'API Python 3. Objectif : initialiser les redirections de flux
+sortants (stdout) vers la console avant que Py_Initialize ne soit appel√©.
+Corrige le bug o√π les sorties python (et donc bindings python) n'apparaissaient pas dans le panneau
 "sorties python" de la console.
 
 
 Version 5.0.5 : 27/08/21
 ===============
 
-Correctifs et ammÈlioration console Python 3.
+Correctifs et amm√©lioration console Python 3.
 
 
 Version 5.0.4 : 24/08/21
@@ -195,71 +202,71 @@ Version 5.0.3 : 04/08/21
 Retouche support binding Python 3.
 
 
-Version 5.0.2 : 11/12/20 RÈvisions svn 399/400
+Version 5.0.2 : 11/12/20 R√©visions svn 399/400
 ===============
 
 Retouches mineures des CMakeLists.txt 
 
 
-Version 5.0.1 : 11/12/20 RÈvisions svn 397/398
+Version 5.0.1 : 11/12/20 R√©visions svn 397/398
 ===============
 
-Retouches mineures des CMakeLists.txt relatives ‡ l'utilisation de Qt.
+Retouches mineures des CMakeLists.txt relatives √† l'utilisation de Qt.
 
 
-Version 5.0.0 : 10/09/20 RÈvisions svn 388/389
+Version 5.0.0 : 10/09/20 R√©visions svn 388/389
 ===============
 
-Portage Python 3.0 avec maintient compatibilitÈ Python 2.
-Duplication/adaptation des scripts de etc dans des sous-rÈpertoires python2 et python3
-=> requiert d'ajouter le bon rÈpertoire aux variables PYTHONPATH et QT_PYTHON_SCRIPTS_DIR.
-Le portage est effectuÈ l‡ o˘ c'est utile pour cette bibliothËque => non complÈtement fait dans qpyconsole.cpp.
-Requiert TkUtil v 5.6.0 ou ultÈrieur, PythonUtil 5.5.0 ou ultÈrieur.
+Portage Python 3.0 avec maintient compatibilit√© Python 2.
+Duplication/adaptation des scripts de etc dans des sous-r√©pertoires python2 et python3
+=> requiert d'ajouter le bon r√©pertoire aux variables PYTHONPATH et QT_PYTHON_SCRIPTS_DIR.
+Le portage est effectu√© l√† o√π c'est utile pour cette biblioth√®que => non compl√©tement fait dans qpyconsole.cpp.
+Requiert TkUtil v 5.6.0 ou ult√©rieur, PythonUtil 5.5.0 ou ult√©rieur.
 
 Correction de bogue dans QtPythonConsole::handleDownKeyPress et QtPythonConsole::handleUpKeyPress : en
-cas de wrapping les lignes d'historiques insÈrÈes suite aux pression de touches up et down Ètaient 
-inconsistantes et Áa partait en vrille.
+cas de wrapping les lignes d'historiques ins√©r√©es suite aux pression de touches up et down √©taient 
+inconsistantes et √ßa partait en vrille.
 
 ATTENTION : 
-- les fichiers etc/*.py sont dÈployÈs, selon le cas, dans lib/python2.*/site-packages ou lib/python3.*//site-packages.
+- les fichiers etc/*.py sont d√©ploy√©s, selon le cas, dans lib/python2.*/site-packages ou lib/python3.*//site-packages.
 - En python3 il est impossible de mettre des breakpoints dans des boucles.
 
 
-Version 4.4.3 : 10/09/20 RÈvisions svn 386/387. Non dÈployÈe, non testÈe.
+Version 4.4.3 : 10/09/20 R√©visions svn 386/387. Non d√©ploy√©e, non test√©e.
 ===============
 
-Branche issue de la version 4.4.2 et qui bÈnÈficie ‡ toutes fins utiles d'un correctif de la version
+Branche issue de la version 4.4.2 et qui b√©n√©ficie √† toutes fins utiles d'un correctif de la version
 5.0.0 (portage python 2/python 3).
 
 Correction de bogue dans QtPythonConsole::handleDownKeyPress et QtPythonConsole::handleUpKeyPress : en
-cas de wrapping les lignes d'historiques insÈrÈes suite aux pression de touches up et down Ètaient 
-inconsistantes et Áa partait en vrille.
+cas de wrapping les lignes d'historiques ins√©r√©es suite aux pression de touches up et down √©taient 
+inconsistantes et √ßa partait en vrille.
 
 
-Version 4.4.2 : 23/07/20 RÈvisions svn 380/381
+Version 4.4.2 : 23/07/20 R√©visions svn 380/381
 ===============
 
 v 0.8.0 de cmake/workarounds.cmake (LC_ALL=C)
 Cible d'exportation
 
 
-Version 4.4.1 : 21/07/20 RÈvisions 375/376
+Version 4.4.1 : 21/07/20 R√©visions 375/376
 ===============
 
 Retouches emplacement d'installation des fichiers NEC*.py (etc -> python2.7/site-packages) et droits sur ces fichiers.
 
 
-Version 4.4.0 : 17/07/20 RÈvisions 373/374
+Version 4.4.0 : 17/07/20 R√©visions 373/374
 ===============
 
-enum RUNNING_MODE { RM_CONTINUOUS, RM_DEBUG } devient enum RUNNING_MODE { RM_CONTINUOUS, RM_DEBUG } car -DDEBUG ‡ la compilation
+enum RUNNING_MODE { RM_CONTINUOUS, RM_DEBUG } devient enum RUNNING_MODE { RM_CONTINUOUS, RM_DEBUG } car -DDEBUG √† la compilation
 pouvait interferer avec QtPythonConsole::DEBUG.
 
 
 Version 4.3.0 : 06/04/20
 ===============
 
-DÈplacement des en-tÍtes dans le rÈpertoire QtPython
+D√©placement des en-t√™tes dans le r√©pertoire QtPython
 TkUtil v 5.4.0
 QtUtil v 5.3.0
 PythonUtil v 5.3.0
@@ -273,68 +280,68 @@ Portage g++ v 7.5.0
 auto_ptr -> unique_ptr sauf 2 (QtPythonConsole::_commandsFile et _commandsStream qui mettent en erreur g++ 7.5.0).
 
 
-Version 4.1.0 : 18/02/20. RÈvisions svn 366
+Version 4.1.0 : 18/02/20. R√©visions svn 366
 ===============
 
-- Retouches compatibilitÈ (SameMinorVersion -> SameMajorVersion)
+- Retouches compatibilit√© (SameMinorVersion -> SameMajorVersion)
 
 
-Version 4.0.2 : 07/02/20. RÈvisions svn 364
+Version 4.0.2 : 07/02/20. R√©visions svn 364
 ===============
 
-Retouches gestion des dÈpendances et dÈploiement des scripts nÈcessaires.
+Retouches gestion des d√©pendances et d√©ploiement des scripts n√©cessaires.
 Ajout arborescence cmake + recette spack sous svn.
-Ajout cible de crÈation d'une archive (create_tarball.sh).
+Ajout cible de cr√©ation d'une archive (create_tarball.sh).
 
 
-Version 4.0.1 : 13/01/20. RÈvisions svn 363
+Version 4.0.1 : 13/01/20. R√©visions svn 363
 ===============
 
-Portage CMake/Spack. Retouche python_binding.cmake et workarounds.cmake + dÈpendance ‡ Python.
+Portage CMake/Spack. Retouche python_binding.cmake et workarounds.cmake + d√©pendance √† Python.
 
 
-Version 4.0.0 : 19/12/19. C. PIGNEROL RÈvisions svn r361/r362
+Version 4.0.0 : 19/12/19. C. PIGNEROL R√©visions svn r361/r362
 ---------------
 
-Portage CMake/Spack g++ 8.3/intel 18.0.3 (arrÍt GSCC).
+Portage CMake/Spack g++ 8.3/intel 18.0.3 (arr√™t GSCC).
 
 
-Version 3.8.0 : publiÈe le 26/09/19. C. PIGNEROL RÈvisions svn r358/r359
+Version 3.8.0 : publi√©e le 26/09/19. C. PIGNEROL R√©visions svn r358/r359
 ---------------
 
 - TK_variants v 4.10.0  (QtUtil v 4.8.0).
 
 
-Version 3.7.0 : publiÈe le 05/09/19. C. PIGNEROL RÈvisions svn r347/r348
+Version 3.7.0 : publi√©e le 05/09/19. C. PIGNEROL R√©visions svn r347/r348
 ---------------
 
 - TK_variants v 4.7.0  (TkUtil v 4.6.0).
 
 
-Version 3.6.1 : publiÈe le 29/01/19. C. PIGNEROL RÈvisions svn r342/r344
+Version 3.6.1 : publi√©e le 29/01/19. C. PIGNEROL R√©visions svn r342/r344
 ---------------
 
-RedÈployÈe le 12/03/19 :
-- Le sÈlecteur de fichier dans QtPythonConsole::insertScriptCallback
-n'utilise plus de sÈlecteur de fichier natif.
+Red√©ploy√©e le 12/03/19 :
+- Le s√©lecteur de fichier dans QtPythonConsole::insertScriptCallback
+n'utilise plus de s√©lecteur de fichier natif.
 - Tooltips de menu visibles en Qt 5.
 
 - TK_variants v 4.6.1  (PythonUtil v 4.5.1, correctif PythonLogOutputStream::toComment).
 
 
-Version 3.6.0 : publiÈe le 28/11/18. C. PIGNEROL RÈvisions svn r334/r336
+Version 3.6.0 : publi√©e le 28/11/18. C. PIGNEROL R√©visions svn r334/r336
 ---------------
 
 - TK_variants v 4.6.0  (TkUtil v 4.5.0).
 
 
-Version 3.5.0 : publiÈe le 16/11/18. C. PIGNEROL RÈvisions svn r331/r333
+Version 3.5.0 : publi√©e le 16/11/18. C. PIGNEROL R√©visions svn r331/r333
 ---------------
 
 - TK_variants v 4.5.0  (TkUtil v 4.4.0).
 
 
-Version 3.4.0 : publiÈe le 14/09/18. C. PIGNEROL RÈvisions svn r327/r329
+Version 3.4.0 : publi√©e le 14/09/18. C. PIGNEROL R√©visions svn r327/r329
 ---------------
 
 - TK_variants v 4.4.0  (TkUtil v 4.3.0, ConsoleOutput::cout et cerr).
@@ -342,67 +349,67 @@ Version 3.4.0 : publiÈe le 14/09/18. C. PIGNEROL RÈvisions svn r327/r329
 Utilisation de ConsoleOutput::cout ( ) et cerr ( ) de TkUtil.
 
 
-Version 3.3.0 : publiÈe le 07/09/18. C. PIGNEROL RÈvisions svn r321/r323
+Version 3.3.0 : publi√©e le 07/09/18. C. PIGNEROL R√©visions svn r321/r323
 ---------------
 
 - TK_variants v 4.3.0  (TkUtil v 4.2.0, QtUtil v 4.3.0).
 
 Module QtPython :
-Retouches concernant les jeux de caractËres utilisÈs.
-- QtPythonConsole::consoleCharset, ‡ initialiser par l'application dËs que
+Retouches concernant les jeux de caract√®res utilis√©s.
+- QtPythonConsole::consoleCharset, √† initialiser par l'application d√®s que
 possible.
 
 
-Version 3.2.0 : publiÈe le 22/06/18. C. PIGNEROL RÈvisions svn r318/r320
+Version 3.2.0 : publi√©e le 22/06/18. C. PIGNEROL R√©visions svn r318/r320
 ---------------
 
 - TK_variants v 4.2.0  (TkUtil v 4.1.0, nouveaux services UTF8String).
 
 
-Version 3.1.0 : publiÈe le 08/06/18. C. PIGNEROL
+Version 3.1.0 : publi√©e le 08/06/18. C. PIGNEROL
 ---------------
 
 - TK_variants v 4.1.0  (Qt591, ECM_Variants v 1.22.0 => arret cible
 BullEL_6_AE__x86_64).
-Utilisation du scenario de deploiement QT_LIBS. DÈploiement uniquement des
+Utilisation du scenario de deploiement QT_LIBS. D√©ploiement uniquement des
 versions statiques.
 
 
-Version 3.0.0 : publiÈe le 12/04/18. C. PIGNEROL
+Version 3.0.0 : publi√©e le 12/04/18. C. PIGNEROL
 ---------------
 
 - TK_variants v 4.0.0. TkUtil v 4.0.0, classe UTF8String.
 
 Support UTF-8 au niveau de l'encodage des fichiers sources.
 
-Utilisation des nouveaux services de TkUtil/QtUtil dans l'auto-dÈtection du jeu
-de caractËres utilisÈ pour encoder les fichiers sources.
+Utilisation des nouveaux services de TkUtil/QtUtil dans l'auto-d√©tection du jeu
+de caract√®res utilis√© pour encoder les fichiers sources.
 
-Correctif QtPythonConsole::execFile : _running et _executingFile remis ‡ false
+Correctif QtPythonConsole::execFile : _running et _executingFile remis √† false
 y compris en cas d'erreur.
 
 
-Version 2.10.0 : publiÈe le 15/03/18. C. PIGNEROL
+Version 2.10.0 : publi√©e le 15/03/18. C. PIGNEROL
 ---------------
 
 - TK_variants v 3.2.0
 
-QtPythonConsole : Correctif en mode exÈcution de fichier script (execFile), les
-commandes exÈcutÈes sont ajoutÈes ‡ l'historique.
-Ajout de la mÈthode isExecutingFile ‡ cet effet.
+QtPythonConsole : Correctif en mode ex√©cution de fichier script (execFile), les
+commandes ex√©cut√©es sont ajout√©es √† l'historique.
+Ajout de la m√©thode isExecutingFile √† cet effet.
 
 
-Version 2.9.1 : publiÈe le 18/01/18. C. PIGNEROL
+Version 2.9.1 : publi√©e le 18/01/18. C. PIGNEROL
 ---------------
 
 - TK_variants v 3.1.0
 
-- QtPythonConsole::isRunning retourne true durant l'exÈcution d'un fichier.
-- QtPythonConsole::execFile attrappe les exceptions c++ levÈes durant 
-l'exÈcution du script.
+- QtPythonConsole::isRunning retourne true durant l'ex√©cution d'un fichier.
+- QtPythonConsole::execFile attrappe les exceptions c++ lev√©es durant 
+l'ex√©cution du script.
 
 
-Version 2.9.0 : publiÈe le 13/11/17. C. PIGNEROL
+Version 2.9.0 : publi√©e le 13/11/17. C. PIGNEROL
 ---------------
 
 - TK_variants v 3.0.0 (ECM_Variants v 1.21.0 : portage RH 7,
@@ -411,145 +418,145 @@ compilateurs gcc 6.2.0, icpc 17.0.4)
 - Suppression des QtCore/, QtGui/ et autres pour les includes Qt.
 
 
-Version 2.8.0 : publiÈe le 19/10/17. C. PIGNEROL
+Version 2.8.0 : publi√©e le 19/10/17. C. PIGNEROL
 ---------------
 
 - QtUtil v 3.5.0
 
 
-Version 2.7.0 : publiÈe le 16/10/17. C. PIGNEROL
+Version 2.7.0 : publi√©e le 16/10/17. C. PIGNEROL
 ---------------
 
 - QtPythonConsole::addToHistoric : support commande multilignes (mais
-non recommandÈ).
+non recommand√©).
 
 
-Version 2.6.0 : publiÈe le 02/10/17. C. PIGNEROL
+Version 2.6.0 : publi√©e le 02/10/17. C. PIGNEROL
 ---------------
 
 - QtPythonConsole::execInstructions : correctifs en cas d'erreur en mode
 normal (non debug). Tout le texte est en orange.
-Support des exceptions c++ levÈes par l'API appelÈe, corrige le fait
-que la main n'Ètait pas rendue par la console.
-- QtPythonConsole::addSwigCompletions : support d'un mÈcanisme optionnel
-permettant de proposer une completion exacte pour les mÈthodes de signature
-unique, et reposant sur le mot clÈ UnusedStructForSwigCompletion.
+Support des exceptions c++ lev√©es par l'API appel√©e, corrige le fait
+que la main n'√©tait pas rendue par la console.
+- QtPythonConsole::addSwigCompletions : support d'un m√©canisme optionnel
+permettant de proposer une completion exacte pour les m√©thodes de signature
+unique, et reposant sur le mot cl√© UnusedStructForSwigCompletion.
 
 
-Version 2.5.0 : publiÈe le 08/09/17. C. PIGNEROL
+Version 2.5.0 : publi√©e le 08/09/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.16.0 (PythonUtil v 3.5.0)
 
-Correctifs/ AmÈliorations :
+Correctifs/ Am√©liorations :
 - QtPythonConsole::addToHistoric : en cas d'historique multilignes
-(commentaire/sortie python), un # est ajoutÈ en dÈbut de chaque ligne.
-- QtPythonConsole::execInstructions : en cas d'exÈcution de ligne
-sans code (commentaire uniquement) un message d'erreur personnalisÈ
-est affichÈ.
-- QtPythonConsole::lineProcessedCallback : annulation de la sÈlection.
+(commentaire/sortie python), un # est ajout√© en d√©but de chaque ligne.
+- QtPythonConsole::execInstructions : en cas d'ex√©cution de ligne
+sans code (commentaire uniquement) un message d'erreur personnalis√©
+est affich√©.
+- QtPythonConsole::lineProcessedCallback : annulation de la s√©lection.
 - QtPythonConsole::execFile appelle processPythonOutputs => flush dans les
-diffÈrentes sorties des sorties python.
-- QtPythonConsole::exec* : utilisation de la classe EndOfDocCursor crÈÈe pour
-positionner, en fin de traitement, le curseur en position Èditable en fin de
+diff√©rentes sorties des sorties python.
+- QtPythonConsole::exec* : utilisation de la classe EndOfDocCursor cr√©√©e pour
+positionner, en fin de traitement, le curseur en position √©ditable en fin de
 document.
 
 
-Version 2.4.0 : publiÈe le 21/07/17. C. PIGNEROL
+Version 2.4.0 : publi√©e le 21/07/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.15.0 (TkUtil v 3.2.0)
 
 
-Version 2.3.0 : publiÈe le 23/06/17. C. PIGNEROL
+Version 2.3.0 : publi√©e le 23/06/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.14.0 (QtUtil v 3.3.0)
 
-PrÈ-portage Qt 5.8.x
+Pr√©-portage Qt 5.8.x
 
 
-Version 2.2.0 : publiÈe le 16/03/17. C. PIGNEROL
+Version 2.2.0 : publi√©e le 16/03/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.7.0 (QtUtil v 3.2.0)
 
 
-Version 2.1.0 : publiÈe le 17/01/17. C. PIGNEROL
+Version 2.1.0 : publi√©e le 17/01/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.3.0 (QtUtil v 3.1.0)
 
 
-Version 2.0.1 : publiÈe le 12/01/17. C. PIGNEROL
+Version 2.0.1 : publi√©e le 12/01/17. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.2.0
 
 - QtPythonConsole::addToHistoric : correctif concernant la coloration du fond de
-la console en cas d'erreur. Par dÈfaut pour les lignes ‡ venir la couleur
+la console en cas d'erreur. Par d√©faut pour les lignes √† venir la couleur
 restait rouge (erreur).
-- QtPythonConsole::execInstructions : coorectif lors de la rÈcupÈration des
+- QtPythonConsole::execInstructions : coorectif lors de la r√©cup√©ration des
 messages d'erreur.
 
 
-Version 2.0.0 : publiÈe le 12/12/16. C. PIGNEROL
+Version 2.0.0 : publi√©e le 12/12/16. C. PIGNEROL
 ---------------
 
 TK_Variants v 2.0.0
 
 TkUtil/QtUtil v 3.0.0
 
-ArrÍt variant MT.
+Arr√™t variant MT.
 
 
-Version 1.15.0 : publiÈe le 29/08/16. C. PIGNEROL
+Version 1.15.0 : publi√©e le 29/08/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.73.0
 
 
-Version 1.14.0 : publiÈe le 30/06/16. C. PIGNEROL
+Version 1.14.0 : publi√©e le 30/06/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.72.0
 
 - QtPythonConsole : correctifs de bogue :
-	- les icÙnes pas suivant, continuer, exÈcuter sont fonctionnelles en mode
-	debug pendant l'exÈcution des lignes 2 et suivantes d'une session debug
-	(alors qu'elles sont bien insensibilisÈes lors de la premiËre) => "status"
+	- les ic√¥nes pas suivant, continuer, ex√©cuter sont fonctionnelles en mode
+	debug pendant l'ex√©cution des lignes 2 et suivantes d'une session debug
+	(alors qu'elles sont bien insensibilis√©es lors de la premi√®re) => "status"
 	waitingForRunning.
 	- L'insertion de commandes applicatives (via addToHistoric (...) se faisait
-	mal, absence entre autres de saut ‡ la ligne.
+	mal, absence entre autres de saut √† la ligne.
 - NECPdb.py : dans postcmd (self, stop, line) correctif,
-QtPythonCalls.lineProcessed n'est pas appelÈ si c'est une commande Pdb.
+QtPythonCalls.lineProcessed n'est pas appel√© si c'est une commande Pdb.
 
 
-Version 1.13.2 : non publiÈe (29/06/16. C. PIGNEROL)
+Version 1.13.2 : non publi√©e (29/06/16. C. PIGNEROL)
 ----------------
 
 - QtPythonConsole : correctif de bogue :
-	- Une ligne Ètait sautÈe lorsque l'on quittait le mode debug alors que
-	toutes les lignes n'Ètaient pas exÈcutÈes.
+	- Une ligne √©tait saut√©e lorsque l'on quittait le mode debug alors que
+	toutes les lignes n'√©taient pas ex√©cut√©es.
 
 
-Version 1.13.1 : publiÈe le 13/05/16. C. PIGNEROL
+Version 1.13.1 : publi√©e le 13/05/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.69.0
 
 Correctif QtPythonConsole : suppression utilisation
-flags.cf_flags = CO_FUTURE_DIVISION car python ne substitue pas l'opÈrateur /
+flags.cf_flags = CO_FUTURE_DIVISION car python ne substitue pas l'op√©rateur /
 par div dans les scripts => mauvais mapping avec swig 1.3.
 
 
-Version 1.13.0 : publiÈe le 15/03/16. C. PIGNEROL
+Version 1.13.0 : publi√©e le 15/03/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.66.0
 
 
-Version 1.12.0 : publiÈe le 21/01/16. C. PIGNEROL
+Version 1.12.0 : publi√©e le 21/01/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.59.0
@@ -557,46 +564,46 @@ TK_Variants v 1.59.0
 Correctif QtPythonConsole::addSwigCompletions (plantage icpc/release).
 
 
-Version 1.11.0 : publiÈe le 05/01/16. C. PIGNEROL
+Version 1.11.0 : publi√©e le 05/01/16. C. PIGNEROL
 ----------------
 
 TK_Variants v 1.57.0
 
 Correctif dans QtPythonConsole::addToHistoric : bon positionnement du curseur
-si la commande reÁue en argument est multilignes.
+si la commande re√ßue en argument est multilignes.
 
 
-Version 1.10.0 : publiÈe le 17/11/15. C. PIGNEROL
+Version 1.10.0 : publi√©e le 17/11/15. C. PIGNEROL
 ----------------
 
-RedÈployÈ le 20/11/15 : correctif Instruction::isMultiline.
+Red√©ploy√© le 20/11/15 : correctif Instruction::isMultiline.
 
 TK_Variants v 1.56.0
 
-DÈveloppements QtPythonConsole :
+D√©veloppements QtPythonConsole :
 - Affichage des sorties standard/erreur dans getLogDispatcher ( )
-=> possibilitÈ de console Qt type QtLogsView spÈcialisÈe Log::PROCESS (cf.
+=> possibilit√© de console Qt type QtLogsView sp√©cialis√©e Log::PROCESS (cf.
 PyConsole).
-- Affichage, quand cela est possible, des rÈsultats d'instructions python
+- Affichage, quand cela est possible, des r√©sultats d'instructions python
 type 2+2 ou dir(sys). Cela requiert :
 	- Mode normal
 	- 1 seule instruction
-- get_python_error : correctif permettant d'obtenir le dÈtail de l'erreur
-rencontrÈe (PyString_Check (errdata) -> PyString_Check (pystring)).
-- QtPythonConsole::next : correctif visant ‡ gÈrer une Èventuelle exception 
-rencontrÈe lors de l'exÈcution de l'instruction suivante.
-- Correctif scrolling console python lors de l'exÈcution des scripts.
+- get_python_error : correctif permettant d'obtenir le d√©tail de l'erreur
+rencontr√©e (PyString_Check (errdata) -> PyString_Check (pystring)).
+- QtPythonConsole::next : correctif visant √† g√©rer une √©ventuelle exception 
+rencontr√©e lors de l'ex√©cution de l'instruction suivante.
+- Correctif scrolling console python lors de l'ex√©cution des scripts.
 
 
-Version 1.9.0 : publiÈe le 03/11/15. C. PIGNEROL
+Version 1.9.0 : publi√©e le 03/11/15. C. PIGNEROL
 ---------------
 
 TK_Variants v 1.55.0
 
-DÈveloppements QtPythonConsole.
+D√©veloppements QtPythonConsole.
 - Correctifs dans QtPythonCalls_processEvents et NECPdb::cmdloop. Le mode
 debug ne fonctionnait pas en Python 2.7.x.
-- Renfort des appels python, appel ‡ PyErr_Clear en cas d'Èchec afin de ne pas
+- Renfort des appels python, appel √† PyErr_Clear en cas d'√©chec afin de ne pas
 compromettre les prochains appels.
 - QtPythonConsole::addToHistoric : affiche sur fond orange les instructions en
 erreur.
@@ -605,8 +612,8 @@ erreur.
 
 Remarque :
 - Dans QtPythonConsole, le remplacement des execInstruction ("execfile (...)")
-par la mÈthode execFile reposant PyRun_FileFlags initialement prÈvu est
-actuellement abandonnÈ. Lors de la seconde session en mode debug l'exÈcution
+par la m√©thode execFile reposant PyRun_FileFlags initialement pr√©vu est
+actuellement abandonn√©. Lors de la seconde session en mode debug l'ex√©cution
 bloque dans bdb._set_stopinfo, que ce soit avec Python 2.6 ou 2.7 :
 > /usr/lib64/python2.6/bdb.py(161)_set_stopinfo()
 -> self.stopframe = stopframe
@@ -614,7 +621,7 @@ bloque dans bdb._set_stopinfo, que ce soit avec Python 2.6 ou 2.7 :
 -> self.returnframe = returnframe
 
 
-Version 1.8.0 : publiÈe le 23/10/15. C. PIGNEROL
+Version 1.8.0 : publi√©e le 23/10/15. C. PIGNEROL
 ---------------
 
 - TK_Variants v 1.54.0 (ECM_Variants v 1.18.0 (Sur RH 6 Python 2.6 et 2.7).
@@ -622,44 +629,44 @@ Version 1.8.0 : publiÈe le 23/10/15. C. PIGNEROL
 
 Retouches script de lancementi de la console PyConsole.
 
-DÈploiement RH6 Python 2.6 et 2.7.
+D√©ploiement RH6 Python 2.6 et 2.7.
 
 
-Version 1.7.0 : publiÈe le 23/10/15. C. PIGNEROL
+Version 1.7.0 : publi√©e le 23/10/15. C. PIGNEROL
 ---------------
 
-- QtPythonConsole : service de complÈtion.
-En Èchec dans le cas d'un appel binding swig avec une signature unique possible
+- QtPythonConsole : service de compl√©tion.
+En √©chec dans le cas d'un appel binding swig avec une signature unique possible
 car aucun moyen d'avoir cette signature, alors que quand plusieures signatures 
 sont possibles swig les donne dans son message d'erreur. Dommage ...
-- QtPythonConsole : correctif premiËre ligne en mode pas ‡ pas (arrÍt aprËs la
-premiËre instruction y compris si plusieures lignes commentÈes ou blanches
-au dÈbut).
+- QtPythonConsole : correctif premi√®re ligne en mode pas √† pas (arr√™t apr√®s la
+premi√®re instruction y compris si plusieures lignes comment√©es ou blanches
+au d√©but).
 
 
-Version 1.6.0 : publiÈe le 16/10/15. C. PIGNEROL
+Version 1.6.0 : publi√©e le 16/10/15. C. PIGNEROL
 ---------------
 
-- Classe de services QtPython, qui reÁoit getVersion, initialize, finalize et
+- Classe de services QtPython, qui re√ßoit getVersion, initialize, finalize et
 slashify.
 - Nouvelle classe de console python (QtPythonConsole) qui repose sur la classe
 QtTextEditor et utilise la classe QtPythonSyntaxHighlighter.
-Cette classe QtPythonConsole peut fonctionner en mode debug (points d'arrÍt,
-avancement pas ‡ pas, ...). Elle gËre Ègalement un historique des instructions
-jouÈes utilisable via MAJ + touche haut ou bas, et supporte optionnellement les
-encodages ISO-8859-1 (valeur par dÈfaut).
+Cette classe QtPythonConsole peut fonctionner en mode debug (points d'arr√™t,
+avancement pas √† pas, ...). Elle g√®re √©galement un historique des instructions
+jou√©es utilisable via MAJ + touche haut ou bas, et supporte optionnellement les
+encodages ISO-8859-1 (valeur par d√©faut).
 - Classe QtDecoratedPythonConsole.
-- Diverses icÙnes.
+- Diverses ic√¥nes.
 - Application test_console.
 
 
-Version 1.5.0 : publiÈe le 07/07/15. C. PIGNEROL
+Version 1.5.0 : publi√©e le 07/07/15. C. PIGNEROL
 ---------------
 
 - TK_Variants v 1.52.0 (Portage Atos_7__x86_64).
 
 
-Version 1.4.0 : publiÈe le 06/03/15. C. PIGNEROL
+Version 1.4.0 : publi√©e le 06/03/15. C. PIGNEROL
 ---------------
 
 - TK_Variants v 1.48.0 (TkUtil v 2.36.0, QtUtil v. 2.47.0).
@@ -667,54 +674,54 @@ Version 1.4.0 : publiÈe le 06/03/15. C. PIGNEROL
 - Passage sous coverity => quelques correctifs.
 
 
-Version 1.3.0 : publiÈe le 01/12/14. C. PIGNEROL
+Version 1.3.0 : publi√©e le 01/12/14. C. PIGNEROL
 ---------------
 
 - TK_Variants v 1.44.0 (QtUtil v 2.46.0).
 
 
-Version 1.2.0 : publiÈe le 28/11/14. C. PIGNEROL
+Version 1.2.0 : publi√©e le 28/11/14. C. PIGNEROL
 ---------------
 
 - TK_Variants v 1.43.0 (TkUtil v 2.35.0).
 
 
-Version 1.1.1 : publiÈe le 17/11/14. C. PIGNEROL
+Version 1.1.1 : publi√©e le 17/11/14. C. PIGNEROL
 ---------------
 
 - QtPythonPanel : try/catch sur les callbacks, affichage via Messagebox.
 - TK_variants v 1.42.0
 
 
-Version 1.1.0 : publiÈe le 22/09/14. C. PIGNEROL
+Version 1.1.0 : publi√©e le 22/09/14. C. PIGNEROL
 ---------------
 
-- QConsole : mÈthode isInError/setInError.
-- QtPythonPanel : gestion du caractËre "en erreur" des commandes, information
-remontÈe dans les callbacks.
-- QtPyConsole::keyPressEvent : comportement par dÈfaut des QTextEdit pour la
-touche Home (en dÈbut de ligne sous Qt 4.7.4).
+- QConsole : m√©thode isInError/setInError.
+- QtPythonPanel : gestion du caract√®re "en erreur" des commandes, information
+remont√©e dans les callbacks.
+- QtPyConsole::keyPressEvent : comportement par d√©faut des QTextEdit pour la
+touche Home (en d√©but de ligne sous Qt 4.7.4).
 
 
-Version 1.0.3 : publiÈe le 22/05/13. C. PIGNEROL
+Version 1.0.3 : publi√©e le 22/05/13. C. PIGNEROL
 ---------------
 
 Correctif QtPyConsole::insertFromMimeData
-- La derniËre ligne n'est pas exÈcutÈe => si c'est une instruction partielle
-il n'y a pas de tentative de l'exÈcuter.
-=> Pour exÈcuter une ligne python par copier/coller il faut nÈcessairement
-apporter un caractËre de fin de ligne dans le tampon.
+- La derni√®re ligne n'est pas ex√©cut√©e => si c'est une instruction partielle
+il n'y a pas de tentative de l'ex√©cuter.
+=> Pour ex√©cuter une ligne python par copier/coller il faut n√©cessairement
+apporter un caract√®re de fin de ligne dans le tampon.
 
 
-Version 1.0.2 : publiÈe le 20/05/13. C. PIGNEROL
+Version 1.0.2 : publi√©e le 20/05/13. C. PIGNEROL
 ---------------
 
 Correctifs QtPyConsole::insertFromMimeData
-- Toutes les lignes sont exÈcutÈes
-- Coupe du texte en conservant les lignes vides (pour tester ‡ l'usage).
+- Toutes les lignes sont ex√©cut√©es
+- Coupe du texte en conservant les lignes vides (pour tester √† l'usage).
 
 
-Version 1.0.1 : publiÈe le 04/04/13. C. PIGNEROL
+Version 1.0.1 : publi√©e le 04/04/13. C. PIGNEROL
 ---------------
 
 - Correctif QtPyConsole::insertFromMimeData
@@ -730,7 +737,7 @@ for i in A :
     print i
 
 
-Version 1.0.0 : publiÈe le 04/04/13. C. PIGNEROL
+Version 1.0.0 : publi√©e le 04/04/13. C. PIGNEROL
 ---------------
 
 - TK variants v 1.38.0
@@ -756,7 +763,7 @@ Version 0.6.0 : publiee le 09/09/11. C. PIGNEROL
 - TK variants v 1.19.0, ECM_Variants v 1.8.0
 - TkUtil v 2.25.0, PythonUtil v 2.25.0
 - QtUtil v 2.33.0
-- ArrÍt Qt 4.4.1
+- Arr√™t Qt 4.4.1
 
 
 Version 0.5.0 : publiee le 16/03/11. C. PIGNEROL
@@ -769,8 +776,8 @@ Version 0.4.0 : publiee le 28/01/11. C. PIGNEROL
 ---------------
 
 - TK variants v 1.6.0
-- Suppression des espaces en dÈbut et fin de commande avant exÈcution.
-- Affichage de commentaires associÈs ‡ une commande ajoutÈe ‡ l'historique.
+- Suppression des espaces en d√©but et fin de commande avant ex√©cution.
+- Affichage de commentaires associ√©s √† une commande ajout√©e √† l'historique.
 - Sortie PythonLogOutputStream.
 - Curseur toujours visible.
 
@@ -779,18 +786,18 @@ Version 0.3.0 : publiee le 13/01/11. C. PIGNEROL
 ---------------
 
 - Blindage du fonctionnement en environnement multithread
-=> Changement de thread si nÈcessaire via les signaux Qt. CrÈation et
+=> Changement de thread si n√©cessaire via les signaux Qt. Cr√©ation et
 utilisation des signaux setUsabledCalled et addHistoricCalled.
 - set/getInterpreterName
 - TK variants v 1.5.0.
-- QtUtil v 2.30.0 (blindage multithreading Ègalement).
+- QtUtil v 2.30.0 (blindage multithreading √©galement).
 
 
 Version 0.2.0 : publiee le 05/01/11. C. PIGNEROL
 ---------------
 
 - Retouches API QtPythonPanel.
-- Utilisation et gestion de l'historique de commandes exÈcutÈes ‡ l'aide des
+- Utilisation et gestion de l'historique de commandes ex√©cut√©es √† l'aide des
 touches Haut et Bas.
 - PythonUtil v 2.22.1.
 
@@ -800,5 +807,5 @@ Version 0.1.0 : publiee le 04/01/11. C. PIGNEROL
 
 Creation et deploiement.
 
-Nouveau dÈploiement le 05/01/11 : enrobage des commandes afin d'afficher le
-rÈsultat des expressions exÈcutÈes. API inchangÈe.
+Nouveau d√©ploiement le 05/01/11 : enrobage des commandes afin d'afficher le
+r√©sultat des expressions ex√©cut√©es. API inchang√©e.
