@@ -1,3 +1,10 @@
+Version 6.4.6 : 29/11/24
+===============
+
+Correctif de bogue : si la dernière instruction à exécuter et exécutée est dans une boucle on pointe au début la boucle (juste après le test sur la condition)
+=> toute exécution ultérieure débutera par cette ligne - ce qui est faux - qui est de surcroit indentée => erreur d'indentation python.
+
+
 Version 6.4.5 : 26/11/24
 ===============
 

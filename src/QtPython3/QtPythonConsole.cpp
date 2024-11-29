@@ -943,7 +943,7 @@ void QtPythonConsole::drawLinesNumbers (const QRect& rect)
 		if ((true == block.isVisible ( )) && (bottom >= rect.top ( )))
 		{
 			// Rem : sous Qt 4.7.4 la surimpression (breakpoint, et par dessus ligne actuelle) ne fonctionne pas ... (pixmap ? autre ?)
-			// => on n'affiche pas le BP si ligne courrante.
+			// => on n'affiche pas le BP si ligne courante.
 			if ((_breakpoints.end ( ) != _breakpoints.find (number)) && (currentInstruction ( ) != number))
 			{
 				_breakPointIcon.paint (&painter, 3, top, width, height);
@@ -1232,6 +1232,7 @@ void QtPythonConsole::validateCursorPosition ( )
 		// Attention : si on est en fin de document le numéro de ligne n'existe pas forcément.
 		QTextBlock	block;
 		QTextCursor	cursor	= textCursor ( );
+
 		if (_currentExecLine > document ( )->blockCount ( ))
 		{	// 2 possibilités : la dernière ligne est blanche et convient, sinon on en rajoute une.
 			block	= document ( )->findBlockByNumber (_currentExecLine - 2);
@@ -1516,9 +1517,9 @@ string QtPythonConsole::getPythonScript ( ) const
 
 
 void QtPythonConsole::lineProcessedCallback (const string& fileName, size_t line, bool ok, const string& error)
-{	// 0 == _currentScript.get ( ) : exécution d'une commande, à la ligne courrante
+{	// 0 == _currentScript.get ( ) : exécution d'une commande, à la ligne courante
 	const size_t consoleLine	= (0 == _currentScript.get ( )) ? (_currentExecLine <= 1 ? 1 : _currentExecLine) : _currentScript->getConsoleLineNum (line);	// CP v 5.0.5
-	
+
 	try
 	{
 		if (true == ok)		// ATTENTION : Retour éventuel en ligne de début de boucle pour évaluation de la condition d'arrêt => _currentExecLine se minorée et donc erronnée si fin de boucle atteinte
@@ -2425,7 +2426,7 @@ void QtPythonConsole::execInstructions ( )
 	_halted		= true;
 	updateActions ( );
 
-	// On mémorise le point courrant, pour actualisation finale IHM en une passe
+	// On mémorise le point courant, pour actualisation finale IHM en une passe
 	const size_t	startAt	= _currentExecLine;
 
 	vector<string>	instructions	= getRunnableInstructions (_currentExecLine);
@@ -2440,6 +2441,7 @@ void QtPythonConsole::execInstructions ( )
 	flags.cf_flags					= 0;
 	PyErr_Clear ( );
 	registerConsole (*this);
+
 	if (1 == instructions.size ( ))
 	{	// CP on pourrait évaluer la qualité de l'instruction (générée en python) à l'aide par exemple de
 		// Py_CompileString (cf.QPyConsole::interpretCommand). En cas d'absence d'instruction (commentaire, ligne finissant
@@ -2470,6 +2472,31 @@ void QtPythonConsole::execInstructions ( )
 		{
 		}
 	}	// else if (1 == instructions.size ( ))
+
+	// v 6.4.6 : si la dernière instruction à exécuter et exécutée est dans une boucle on pointe au début la boucle (juste après le test sur la condition)
+	// => toute exécution ultérieure débutera par cette ligne - ce qui est faux - qui est de surcroit indentée => erreur d'indentation python.
+	// On rectifie cette erreur de pointage :
+	if (_currentExecLine <= _maxExecLine)
+	{	// v 6.4.6
+		try
+		{	// Par acquis de conscience ont vérifie que la ligne est effectivement indentée :
+			const string	currentLine	= _currentScript->getConsoleLine (_currentExecLine);
+			if ((currentLine [0] != ' ') && (currentLine [0] != '\t'))
+			{
+				UTF8String      mess (charset);
+                mess << "Erreur possible dans QtPythonConsole::execInstructions : la ligne pointée est supposée indentée (dans une boucle) mais elle ne l'est pas :\n"
+                     << "Ligne visée (" << _currentExecLine << ") : " << currentLine;
+                ConsoleOutput::cerr ( ) << mess << co_endl;
+			}	// if ((currentLine [0] != '1') && (currentLine [0] != '\t'))
+		}
+		catch (...)
+		{
+		}
+
+		_currentExecLine	= _maxExecLine + 1;
+		_previousExecLine	= _maxExecLine;
+	}	// if (_currentExecLine <= _maxExecLine)
+
 	unregisterConsole (*this);
 
 	if (NULL != result)
