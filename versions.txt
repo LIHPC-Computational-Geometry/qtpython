@@ -1,3 +1,10 @@
+Version 6.5.0 : 28/08/26
+===============
+
+Utilisation de la fonction separate_debug_infos de séparations des informations de débogage du binaire
+de GUIToolkitsVariables.
+
+
 Version 6.4.7 : 06/12/24
 ===============
 

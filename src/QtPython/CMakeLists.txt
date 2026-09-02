@@ -1,12 +1,13 @@
 set (CURRENT_PACKAGE_NAME "QtPython")
 set (CURRENT_PACKAGE_MACRO_NAME "QT_PYTHON")
 
-find_package (GUIToolkitsVariables)
+find_package (GUIToolkitsVariables 1.7 REQUIRED)
 
 include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/python_binding.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/utilities.cmake)
 
 # Le répertoire des scripts python :
 set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
@@ -45,6 +46,7 @@ target_include_directories (QtPython PUBLIC ${QT_INC_DEPENDENCIES} ${Python2_INC
 # Etre capable une fois installée de retrouver QtUtil, TkUtil, Qt5*, ... :
 # (Rem : en son absence on a Set runtime path of "/tmp/pignerol/install/lib/libQtPython.so.5.0.0" to "") ...
 set_target_properties (QtPython PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
+separate_debug_infos (QtPython ${CMAKE_INSTALL_PREFIX}/src)
 
 # INSTALLATION :
 include(CMakePackageConfigHelpers)
