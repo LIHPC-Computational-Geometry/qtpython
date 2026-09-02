@@ -1,13 +1,14 @@
 set (CURRENT_PACKAGE_NAME "QtPython3")
 set (CURRENT_PACKAGE_MACRO_NAME "QT_PYTHON_3")
 
-find_package (GUIToolkitsVariables)
+find_package (GUIToolkitsVariables 1.7 REQUIRED)
 
 include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/common_qt.cmake)     # QT_MAJOR
 include (${GUIToolkitsVariables_CMAKE_DIR}/python_binding.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
+include (${GUIToolkitsVariables_CMAKE_DIR}/utilities.cmake)
 
 # Le répertoire des scripts python :
 set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
@@ -46,6 +47,7 @@ target_include_directories (QtPython3 PUBLIC ${QT_INC_DEPENDENCIES} ${Python3_IN
 # Etre capable une fois installée de retrouver QtUtil, TkUtil, Qt5*, ... :
 # (Rem : en son absence on a Set runtime path of "/tmp/pignerol/install/lib/libQtPython3.so.5.0.0" to "") ...
 set_target_properties (QtPython3 PROPERTIES INSTALL_RPATH_USE_LINK_PATH 1)
+separate_debug_infos (QtPython3 ${CMAKE_INSTALL_PREFIX}/src)
 
 # INSTALLATION :
 include(CMakePackageConfigHelpers)
