@@ -1,0 +1,15 @@
+include(CMakeFindDependencyMacro)
+find_dependency (PythonUtil)
+find_dependency (QtUtil)
+find_dependency (Python3 REQUIRED COMPONENTS Development)
+
+@PACKAGE_INIT@
+set (QtPython3_v2_VERSION @QT_Python_VERSION@)
+set_and_check (QtPython3_v2_INCLUDE_DIR   "@PACKAGE_INCLUDE_INSTALL_DIR@")
+#set_and_check (QtPython3_v2_ARCHIVE_DIR   "@PACKAGE_ARCHIVE_INSTALL_DIR@")
+set_and_check (QtPython3_v2_LIB_DIR   "@PACKAGE_LIB_INSTALL_DIR@")
+set_and_check (QtPython3_v2_RUNTIME_DIR   "@PACKAGE_RUNTIME_INSTALL_DIR@")
+check_required_components (QtPython3_v2)
+
+# Fournir l'accès aux services des cibles (fichier non inclus automatiquement) :
+include(${CMAKE_CURRENT_LIST_DIR}/QtPython3_v2Targets.cmake)

@@ -1,0 +1,15 @@
+<!DOCTYPE RCC><RCC version="1.0">
+ <qresource>
+     <file>images/breakpoint.png</file>
+     <file>images/current_line.png</file>
+     <file>images/dbg_mode.png</file>
+     <file>images/run.png</file>
+     <file>images/stop.png</file>
+     <file>images/quit.png</file>
+     <file>images/next.png</file>
+     <file>images/add_breakpoint.png</file>
+     <file>images/remove_breakpoint.png</file>
+     <file>images/clear_breakpoints.png</file>
+     <file>images/load_script.png</file>
+ </qresource>
+ </RCC>

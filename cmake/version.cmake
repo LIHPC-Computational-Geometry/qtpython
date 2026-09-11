@@ -2,9 +2,9 @@
 # version.cmake : version du projet
 #
 
-# Pour la bibliothèque QtPython3 :
-set (QT_PYTHON_3_MAJOR_VERSION "6")
-set (QT_PYTHON_3_MINOR_VERSION "5")
+# Pour les bibliothèques QtPython3 et QtPython3_v2 :
+set (QT_PYTHON_3_MAJOR_VERSION "7")
+set (QT_PYTHON_3_MINOR_VERSION "0")
 set (QT_PYTHON_3_RELEASE_VERSION "0")
 set (QT_PYTHON_3_VERSION ${QT_PYTHON_3_MAJOR_VERSION}.${QT_PYTHON_3_MINOR_VERSION}.${QT_PYTHON_3_RELEASE_VERSION})
 
