@@ -3,6 +3,10 @@ Version 7.0.0 : 11/09/26
 
 QtPython3_v2 : mise en place d'une nouvelle implémentation de la console python 3.
 
+ATTENTION : pb dus à l'exécution dans un thread qui n'est pas le thread principal
+=> 2 possibilités : blinder le code de l'appelant (ex : ensureDataLoaded) ou rectifier
+cette API pour s'esécutercome QtPython3 dans le thread courant.
+
 
 Version 6.5.0 : 28/08/26
 ===============

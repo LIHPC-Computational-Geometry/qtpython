@@ -128,6 +128,7 @@ class QtPythonConsole : public QWidget
 	 */
 	virtual void insert (const std::string& fileName, std::string& warnings);
 
+
 	/**
 	 * Ajoute la commande transmise en argument, si il (le panneau) n'en est pas à l'origine, à l'historique des commandes exécutées, mais ne l'exécute
 	 * pas. Présente l'intérêt d'intercaller des commandes effectuées par ailleurs.
