@@ -139,6 +139,7 @@ void PyConsoleWidget::setRunningState(bool running)
     m_running = running;
     m_paused = false;
     m_editor->setExecuting(running);
+    m_editor->setPaused(false);
     updateButtonsEnabled();
     m_stateLabel->setText(running ? tr("Exécution en cours...") : tr("Prêt"));
 }
@@ -170,6 +171,7 @@ void PyConsoleWidget::onStopClicked()
     // dès le premier "continue" ; l'arrêt ne prend alors effet qu'à la fin
     // naturelle de l'exécution (limitation connue).
     m_paused = false;
+    m_editor->setPaused(false);
     updateButtonsEnabled();
     PyInterpreterBridge::instance().stopExec();
 }
@@ -205,6 +207,8 @@ void PyConsoleWidget::onRunClicked()
 void PyConsoleWidget::resumeFromPause()
 {
     m_paused = false;
+    m_editor->setPaused(false);
+    m_stateLabel->setText(tr("Exécution en cours..."));
     updateButtonsEnabled();
     PyInterpreterBridge::instance().continueExec();
 }
@@ -273,6 +277,8 @@ void PyConsoleWidget::onStepClicked()
 {
     if (m_paused) {
         m_paused = false;
+        m_editor->setPaused(false);
+        m_stateLabel->setText(tr("Exécution en cours..."));
         updateButtonsEnabled();
         PyInterpreterBridge::instance().step();
         return;
@@ -345,14 +351,37 @@ void PyConsoleWidget::execInstruction(const std::string& instruction, const std:
 void PyConsoleWidget::onBreakpointToggleRequested(int line)
 {
     QSet<int> bps = m_editor->breakpoints();
-    if (bps.contains(line)) {
+    const bool wasSet = bps.contains(line);
+    if (wasSet) {
         bps.remove(line);
     } else {
         bps.insert(line);
     }
     m_editor->setBreakpointMarks(bps);
-    // La validité réelle (ligne exécutable) n'est vérifiée qu'au lancement
-    // (onRunClicked), une fois le code compilé.
+    // La validité réelle (ligne exécutable) est de toute façon revérifiée
+    // à chaque lancement (onRunClicked/startExecution), une fois le code
+    // compilé -- mais si une session est déjà en cours (ce qui, la
+    // gouttière n'acceptant les clics que hors exécution ou en pause,
+    // signifie qu'on est nécessairement en pause), on répercute aussi
+    // immédiatement le changement sur le débogueur Python déjà démarré,
+    // pour qu'il prenne effet dès la reprise (Step/Run-Continuer) sans
+    // attendre un nouveau Run.
+    if (m_running) {
+        auto& bridge = PyInterpreterBridge::instance();
+        const int relative = line - m_executedBoundaryAtRunStart;
+        if (wasSet) {
+            bridge.clearBreakpoint(relative);
+        } else if (relative >= 1) {
+            if (!bridge.setBreakpoint(relative)) {
+                // Rejeté par la validation Python (pas réellement une
+                // instruction, ex: suite d'une ligne multi-lignes) :
+                // annule l'ajout visuel qu'on venait de faire.
+                bps.remove(line);
+                m_editor->setBreakpointMarks(bps);
+                m_output->appendStderr(tr("# Point d'arrêt ligne %1 invalide (pas une instruction)\n").arg(line));
+            }
+        }
+    }
 }
 
 void PyConsoleWidget::onCompletionRequested(const QString& prefix)
@@ -388,15 +417,30 @@ void PyConsoleWidget::onLineReached(int line)
     m_editor->setExecutedLineCount(docLine - 1);
     m_editor->setCurrentExecLine(docLine);
     recordExecutedLines(docLine - 1);
+
+    // Garde l'instruction courante visible sans que l'utilisateur ait à
+    // faire défiler -- y compris lors d'une pause intermédiaire en cours
+    // de session (pas seulement en toute fin d'exécution, où c'était déjà
+    // fait par onExecutionFinished()) : docLine est recalculé à chaque
+    // appel à partir de m_executedBoundaryAtRunStart (rafraîchi à chaque
+    // Run), donc correct même si du texte a été inséré avant coup (via
+    // insertExecutedInstructions() ou autre) et a décalé les lignes.
+    m_editor->ensureLineVisible(docLine);
 }
 
 void PyConsoleWidget::onPaused(int line)
 {
     // Emis uniquement quand l'exécution est réellement bloquée à cette
-    // ligne, en attente d'un clic "Pas à pas" ou "Continuer".
-    Q_UNUSED(line);
+    // ligne, en attente d'un clic "Pas à pas" ou "Run" (agissant comme
+    // "Continuer"). L'étiquette d'état passe alors de "Exécution en
+    // cours..." à un état distinct "En pause" : sans ça, rien ne
+    // distinguait visuellement une exécution qui tourne encore d'une
+    // exécution qui attend une action de l'utilisateur.
     if (m_debugMode) {
         m_paused = true;
+        m_editor->setPaused(true);
+        const int docLine = m_executedBoundaryAtRunStart + line;
+        m_stateLabel->setText(tr("En pause -- ligne %1").arg(docLine));
         updateButtonsEnabled();
     }
 }

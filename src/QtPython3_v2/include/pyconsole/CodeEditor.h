@@ -95,6 +95,13 @@ public:
     void setExecuting(bool executing);
     bool isExecuting() const { return m_executing; }
 
+    // En pause en cours de débogage (sous-état de "en cours d'exécution") :
+    // contrairement à l'édition générale du texte, qui reste interdite,
+    // le clic gouttière (points d'arrêt) redevient autorisé -- cf.
+    // handleGutterClick(). Sans effet si !isExecuting().
+    void setPaused(bool paused);
+    bool isPaused() const { return m_paused; }
+
     // Appelé par la gouttière (LineNumberArea) lors d'un clic ; public pour
     // rester un simple composant interne sans dépendance friend.
     void handleGutterClick(int y);
@@ -186,6 +193,7 @@ private:
     int m_errorCommentLine = 0;
     int m_errorCommentLineCount = 1;
     bool m_executing = false;
+    bool m_paused = false;
     QSet<int> m_breakpoints;
     int m_lastKnownBlockCount = 1; // pour détecter les insertions/suppressions de lignes
 

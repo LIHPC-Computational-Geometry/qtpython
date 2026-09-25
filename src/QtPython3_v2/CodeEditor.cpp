@@ -185,8 +185,16 @@ void CodeEditor::setBreakpointMarks(const QSet<int>& lines)
 void CodeEditor::setExecuting(bool executing)
 {
     m_executing = executing;
+    if (!executing) {
+        m_paused = false; // pas de pause hors exécution
+    }
     // Pendant l'exécution, tout le document est protégé (y compris le code
     // non encore exécuté), conformément au cahier des charges.
+}
+
+void CodeEditor::setPaused(bool paused)
+{
+    m_paused = paused;
 }
 
 void CodeEditor::onContentsChange(int position, int charsRemoved, int charsAdded)
@@ -443,9 +451,11 @@ void CodeEditor::mousePressEvent(QMouseEvent* event)
 
 void CodeEditor::handleGutterClick(int y)
 {
-    // Ne permet de poser/enlever un point d'arrêt que hors exécution et
-    // uniquement sur une ligne de code non encore exécuté.
-    if (m_executing)
+    // Ne permet de poser/enlever un point d'arrêt que hors exécution, OU
+    // pendant une pause en cours de débogage (m_paused) -- contrairement à
+    // l'édition générale du texte, qui reste bloquée dans ce second cas --
+    // et uniquement sur une ligne de code non encore exécuté.
+    if (m_executing && !m_paused)
         return;
 
     QTextCursor c = cursorForPosition(QPoint(0, y));

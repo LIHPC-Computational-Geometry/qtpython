@@ -58,38 +58,44 @@ class _StreamRedirector(io.TextIOBase):
 # 1/2 du processus -- sans capture au niveau fd, ce texte n'apparaîtrait
 # jamais dans la console.
 # On duplique donc les fds réels vers des tubes (pipes), lus en continu par
-# des threads dédiés qui relaient chaque fragment via notify_output. Une
-# fois cette capture active, sys.stdout/sys.stderr Python restent les
-# objets standard (liés au fd 1/2, désormais redirigés vers nos tubes) --
-# on se garde bien de les remplacer par un objet Python personnalisé
-# séparé (cf. init_native ci-dessous) : TOUT (print() Python ET C/C++)
-# passe alors par le MÊME tube, lu par le MÊME thread, dans l'ordre
-# chronologique réel des écritures. Avoir deux chemins distincts (un appel
-# Python synchrone d'un côté, un tube lu de façon asynchrone par un thread
-# dédié de l'autre) faisait que les sorties C++ et Python pouvaient
-# apparaître dans un ordre différent de celui où elles avaient réellement
-# eu lieu.
-# NOTE : une fois les fds redirigés, TOUTE écriture sur stdout/stderr faite
-# par le PROCESSUS entier (pas seulement par le code exécuté dans la
-# console) passe par ce mécanisme -- c'est le prix à payer pour intercepter
-# des écritures C/C++ de bas niveau, qui n'ont pas d'autre point d'accroche.
+# des threads dédiés qui relaient chaque fragment via notify_output. Cette
+# capture est activée UNIQUEMENT pendant la durée d'une exécution
+# déclenchée par la console (start()/exec_already_executed()) et désactivée
+# (fds restaurés) dès qu'elle se termine -- ainsi, seules les sorties
+# produites par le code exécuté PAR LA CONSOLE sont récupérées, pas celles
+# d'une autre partie de l'application pendant le reste du temps.
+# Pendant la capture, sys.stdout/sys.stderr Python restent les objets
+# standard (liés au fd 1/2, temporairement redirigés vers nos tubes) -- on
+# se garde bien de les remplacer par un objet Python personnalisé séparé
+# (cf. init_native ci-dessous) : TOUT (print() Python ET C/C++) passe alors
+# par le MÊME tube, lu par le MÊME thread, dans l'ordre chronologique réel
+# des écritures. Avoir deux chemins distincts (un appel Python synchrone
+# d'un côté, un tube lu de façon asynchrone par un thread dédié de l'autre)
+# faisait que les sorties C++ et Python pouvaient apparaître dans un ordre
+# différent de celui où elles avaient réellement eu lieu.
 # Limite connue : le stdout/stderr C++ est généralement bufferisé en mode
 # "pleine mémoire tampon" (non ligne-par-ligne) dès lors qu'il ne pointe
 # plus sur un terminal ; le texte peut donc n'apparaître qu'après un flush
 # explicite (std::endl, std::flush, ou la fin du programme) côté code
 # wrappé -- ce n'est pas quelque chose que l'on puisse forcer depuis ici.
-_fd_capture_started = False
+_saved_stdout_fd = None
+_saved_stderr_fd = None
+_capture_depth = 0  # compteur de réentrance (imbrication par précaution)
 
 
-def _start_fd_capture():
-    """Retourne True si la capture fd a bien démarré, False sinon
-    (environnement sans vrais descripteurs de fichier standards, rare)."""
-    global _fd_capture_started
-    if _fd_capture_started:
+def _enable_fd_capture():
+    """Redirige fd 1/2 vers des tubes pour la durée d'une exécution.
+    Retourne True si la capture est active (déjà activée par un appel
+    englobant, ou tout juste démarrée), False si les vrais descripteurs de
+    fichier standards ne sont pas disponibles (environnement rare)."""
+    global _saved_stdout_fd, _saved_stderr_fd, _capture_depth
+    if _capture_depth > 0:
+        _capture_depth += 1
         return True
-    _fd_capture_started = True
 
     try:
+        _saved_stdout_fd = os.dup(1)
+        _saved_stderr_fd = os.dup(2)
         stdout_r, stdout_w = os.pipe()
         stderr_r, stderr_w = os.pipe()
         os.dup2(stdout_w, 1)
@@ -112,7 +118,34 @@ def _start_fd_capture():
 
     threading.Thread(target=reader, args=(stdout_r, "stdout"), daemon=True).start()
     threading.Thread(target=reader, args=(stderr_r, "stderr"), daemon=True).start()
+    _capture_depth = 1
     return True
+
+
+def _disable_fd_capture():
+    """Restaure fd 1/2 à leur état d'avant _enable_fd_capture() (annule le
+    dernier niveau d'imbrication uniquement)."""
+    global _saved_stdout_fd, _saved_stderr_fd, _capture_depth
+    if _capture_depth <= 0:
+        return
+    _capture_depth -= 1
+    if _capture_depth > 0:
+        return
+
+    try:
+        sys.stdout.flush()
+        sys.stderr.flush()
+    except Exception:
+        pass
+    try:
+        os.dup2(_saved_stdout_fd, 1)
+        os.dup2(_saved_stderr_fd, 2)
+        os.close(_saved_stdout_fd)
+        os.close(_saved_stderr_fd)
+    except OSError:
+        pass
+    _saved_stdout_fd = None
+    _saved_stderr_fd = None
 
 
 # ---------------------------------------------------------------------------
@@ -303,25 +336,17 @@ def init_native(native_module):
     global _native
     _native = native_module
 
-    if _start_fd_capture():
-        # Tout (Python ET C/C++) transite désormais par le même tube :
-        # sys.stdout/sys.stderr restent les objets standard, mais on les
-        # passe en ligne-bufferisé pour que le texte apparaisse rapidement
-        # dans la console (par défaut, un flux non lié à un terminal est
-        # bufferisé en pleine mémoire tampon, ce qui retarderait
-        # l'affichage jusqu'à ce que le tampon se remplisse).
-        try:
-            sys.stdout.reconfigure(line_buffering=True)
-            sys.stderr.reconfigure(line_buffering=True)
-        except (AttributeError, ValueError):
-            pass  # interpréteur trop ancien / flux non reconfigurable : tant pis
-    else:
-        # Environnement sans vrais descripteurs de fichier standards
-        # (rare) : repli sur la redirection Python simple -- elle ne
-        # capture que print()/write() Python (pas le C/C++ de bas niveau),
-        # mais reste préférable à une absence totale de sortie.
-        sys.stdout = _StreamRedirector("stdout")
-        sys.stderr = _StreamRedirector("stderr")
+    # Reconfigure sys.stdout/sys.stderr en ligne-bufferisé une bonne fois
+    # pour toutes (réglage indépendant de ce que fd 1/2 pointe réellement à
+    # un instant donné -- il s'applique aussi bien avant qu'après une
+    # redirection temporaire via _enable_fd_capture()) : par défaut, un
+    # flux non lié à un terminal est bufferisé en pleine mémoire tampon, ce
+    # qui retarderait l'affichage jusqu'à ce que le tampon se remplisse.
+    try:
+        sys.stdout.reconfigure(line_buffering=True)
+        sys.stderr.reconfigure(line_buffering=True)
+    except (AttributeError, ValueError):
+        pass  # interpréteur trop ancien / flux non reconfigurable : tant pis
 
 
 def set_mode(mode):
@@ -402,6 +427,19 @@ def start(debug, step_first=False):
     _debugger._auto_steps_remaining = 1 if (debug and step_first) else 0
     code = _pending_code
 
+    # Capture des flux sortants scopée à la durée de CETTE exécution (voir
+    # commentaire plus haut) : activée ici, désactivée dans le `finally`
+    # de target() ci-dessous, une fois la session terminée (elle couvre
+    # donc aussi bien toutes les pauses intermédiaires que la fin réelle).
+    fd_capture_active = _enable_fd_capture()
+    if not fd_capture_active:
+        # Environnement sans vrais descripteurs de fichier standards
+        # (rare) : repli sur la redirection Python simple -- elle ne
+        # capture que print()/write() Python (pas le C/C++ de bas niveau),
+        # mais reste préférable à une absence totale de sortie.
+        sys.stdout = _StreamRedirector("stdout")
+        sys.stderr = _StreamRedirector("stderr")
+
     def target():
         # Distingue, pour le C++, un arrêt VOLONTAIRE (bouton "Arrêter",
         # via request_stop()) d'une fin normale (tout le code envoyé a
@@ -457,6 +495,11 @@ def start(debug, step_first=False):
                     _native.notify_exception(lineno, text)
         finally:
             _finish(stopped_early)
+            if fd_capture_active:
+                _disable_fd_capture()
+            else:
+                sys.stdout = sys.__stdout__
+                sys.stderr = sys.__stderr__
 
     _run_thread = threading.Thread(target=target, daemon=True)
     _run_thread.start()
@@ -498,6 +541,10 @@ def exec_already_executed(source):
     appelé que lorsque la console n'est pas en cours d'exécution.
     Retourne None en cas de succès, ou le texte de l'exception sinon.
     """
+    fd_capture_active = _enable_fd_capture()
+    if not fd_capture_active:
+        sys.stdout = _StreamRedirector("stdout")
+        sys.stderr = _StreamRedirector("stderr")
     try:
         code = compile(source, CONSOLE_FILENAME, "exec")
         exec(code, _console_globals, _console_globals)
@@ -505,3 +552,9 @@ def exec_already_executed(source):
     except BaseException:
         etype, evalue, _etb = sys.exc_info()
         return "".join(traceback.format_exception_only(etype, evalue)).strip()
+    finally:
+        if fd_capture_active:
+            _disable_fd_capture()
+        else:
+            sys.stdout = sys.__stdout__
+            sys.stderr = sys.__stderr__
