@@ -6,7 +6,7 @@ include (${CMAKE_SOURCE_DIR}/cmake/version.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/common.cmake)
 include (${GUIToolkitsVariables_CMAKE_DIR}/workarounds.cmake)
 
-find_package(Qt5Core NO_CMAKE_SYSTEM_PATH)
+find_package(Qt5Core NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PACKAGE_REGISTRY)
 
 add_executable (PyConsole3 QtPython3InterpretorMainWindow.cpp QtPython3InterpretorMainWindow.h python_console3.cpp)
 set_property (TARGET PyConsole3 PROPERTY AUTOMOC ON)

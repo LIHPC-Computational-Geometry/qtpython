@@ -15,7 +15,7 @@ set (QT_PYTHON_SCRIPTS_DIR "${CMAKE_INSTALL_PREFIX}/${PYTHON_BINDING_DIR}")
 
 find_package (QtUtil 6 REQUIRED)
 find_package (PythonUtil 6 REQUIRED)
-find_package(Qt${QT_MAJOR}Core NO_CMAKE_SYSTEM_PATH)	# In order to enable moc ...
+find_package(Qt${QT_MAJOR}Core NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PACKAGE_REGISTRY)	# In order to enable moc ...
 
 file (GLOB HEADERS public/${CURRENT_PACKAGE_NAME}/*.h)
 file (GLOB CPP_SOURCES *.cpp *.qrc)
