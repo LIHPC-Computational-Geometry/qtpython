@@ -1,3 +1,12 @@
+Version 6.5.1 : 18/11/26
+===============
+
+Fichiers cmake : remplacement de NO_CMAKE_SYSTEM_PATH par NO_CMAKE_SYSTEM_PATH NO_SYSTEM_ENVIRONMENT_PATH NO_CMAKE_SYSTEM_PACKAGE_REGISTRY
+pour Qt (id. GUIToolkitsVariables/cmake/common_qt.cmake).
+
+Fonction QtPython::getNamedVersion ( ).
+
+
 Version 6.5.0 : 28/08/26
 ===============
 

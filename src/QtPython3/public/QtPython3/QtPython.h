@@ -44,6 +44,11 @@ class QtPython
 	static const TkUtil::Version& getVersion ( );
 
 	/**
+	 * @return		Le numéro de version de ce composant logiciel suffixé de la version de la console.
+	 */
+	static TkUtil::UTF8String getNamedVersion ( );
+
+	/**
 	 * @return		Le jeu de caractères utilisé par la console de lancement.
 	 */
 	static const TkUtil::Charset& getConsoleCharset ( );

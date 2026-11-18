@@ -228,6 +228,12 @@ const Version& QtPython::getVersion ( )
 }	// QtPython::getVersion
 
 
+UTF8String QtPython::getNamedVersion ( )
+{
+	return UTF8String (_version.getVersion ( ) + " (console v1)", _consoleCharset);
+}	// QtPython::getNamedVersion
+
+
 const Charset& QtPython::getConsoleCharset ( )	// v 3.3.0
 {
 	return _consoleCharset;
